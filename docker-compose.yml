@@ -1,0 +1,13 @@
+version: "3.9"
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - CACHEBUST=${CACHEBUST}
+    image: my-form-app:latest
+    container_name: my-form-app
+    ports:
+      - "3052:80"
+    restart: unless-stopped
