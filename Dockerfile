@@ -6,11 +6,7 @@ WORKDIR /app
 
 # Install deps
 COPY package*.json ./
-RUN npm ci
-
-# Optional cache-bust arg (bump this to force rebuild of next layers)
-ARG CACHEBUST=0
-RUN echo "CACHEBUST=${CACHEBUST}" > /dev/null
+RUN npm ci --no-cache
 
 # Copy source and build
 COPY . .

@@ -4,8 +4,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      args:
-        - CACHEBUST=${CACHEBUST}
     image: my-form-app:latest
     container_name: my-form-app
     ports:
