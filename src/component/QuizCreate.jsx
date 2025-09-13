@@ -1,18 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-
-const API_URL = "http://35.240.251.182:3000/api/quizzes";
-
-function deriveTitleFromText(text) {
-  if (!text) return "";
-  const firstNonEmptyLine =
-    text
-      .split(/\r?\n/)
-      .map((s) => s.trim())
-      .find((s) => s.length > 0) || "";
-  // Cắt gọn vừa phải
-  return firstNonEmptyLine.slice(0, 80);
-}
+import { api, utils } from "../utils/api";
 
 export default function QuizCreate() {
   const navigate = useNavigate();
@@ -29,7 +17,7 @@ export default function QuizCreate() {
     // Tự sinh title nếu chưa nhập
     let nextTitle = title.trim();
     if (!nextTitle) {
-      nextTitle = deriveTitleFromText(text).trim();
+      nextTitle = utils.deriveTitleFromText(text).trim();
       if (nextTitle) setTitle(nextTitle);
     }
 
@@ -43,22 +31,7 @@ export default function QuizCreate() {
     }
     try {
       setLoading(true);
-      const res = await fetch(API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title: nextTitle, text, createdBy }),
-      });
-      if (!res.ok) {
-        let serverMsg = "";
-        try {
-          const data = await res.json();
-          serverMsg = data?.message || "";
-        } catch (error) {
-          console.error(error);
-          serverMsg = await res.text();
-        }
-        throw new Error(serverMsg || `Tạo quiz thất bại (HTTP ${res.status})`);
-      }
+      await api.createQuiz({ title: nextTitle, text, createdBy });
       navigate("/quizzes");
     } catch (err) {
       setError(err?.message || "Lỗi không xác định");
@@ -123,7 +96,7 @@ export default function QuizCreate() {
                 setText(val);
                 // Gợi ý title theo text nếu title đang rỗng
                 if (!title.trim()) {
-                  const suggestion = deriveTitleFromText(val);
+                  const suggestion = utils.deriveTitleFromText(val);
                   if (suggestion) setTitle(suggestion);
                 }
               }}

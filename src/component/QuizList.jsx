@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-
-const API_URL = "http://35.240.251.182:3000/api/quizzes";
+import { api } from "../utils/api";
 
 export default function QuizList() {
   const [quizzes, setQuizzes] = useState([]);
@@ -15,10 +14,7 @@ export default function QuizList() {
       setLoading(true);
       setError("");
       try {
-        const res = await fetch(API_URL);
-        if (!res.ok) throw new Error("Không tải được danh sách quiz");
-        const data = await res.json();
-        const items = Array.isArray(data?.items) ? data.items : [];
+        const items = await api.getQuizzes();
         if (isMounted) setQuizzes(items);
       } catch (err) {
         if (isMounted) setError(err?.message || "Lỗi không xác định");
@@ -61,6 +57,9 @@ export default function QuizList() {
               placeholder="Title"
               className="px-3 py-2 rounded-md border border-gray-300 bg-white"
             />
+            <Link to="/submissions" className="px-4 py-2 rounded-md bg-gray-600 text-white">
+              Lịch sử nộp bài
+            </Link>
             <Link to="/quizzes/new" className="px-4 py-2 rounded-md bg-blue-600 text-white">+ Tạo mới</Link>
           </div>
         </div>

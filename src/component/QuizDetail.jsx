@@ -1,16 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-
-const API_URL = "http://35.240.251.182:3000/api/quizzes";
-
-function shuffle(array) {
-  const arr = array.slice();
-  for (let i = arr.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
-  }
-  return arr;
-}
+import { api, utils } from "../utils/api";
 
 export default function QuizDetail() {
   const { id } = useParams();
@@ -30,12 +20,7 @@ export default function QuizDetail() {
       setLoading(true);
       setError("");
       try {
-        const res = await fetch(`${API_URL}`);
-        if (!res.ok) throw new Error("Không tải được dữ liệu");
-        const data = await res.json();
-        const items = Array.isArray(data?.items) ? data.items : [];
-        const found = items.find((x) => x._id === id);
-        if (!found) throw new Error("Không tìm thấy bài kiểm tra");
+        const found = await api.getQuizById(id);
         if (isMounted) setQuiz(found);
       } catch (err) {
         if (isMounted) setError(err?.message || "Lỗi không xác định");
@@ -52,7 +37,7 @@ export default function QuizDetail() {
   const questions = useMemo(() => quiz?.questions || [], [quiz]);
 
   const shuffledChoicesByQ = useMemo(() => {
-    return questions.map((q) => shuffle(q.choices || []));
+    return questions.map((q) => utils.shuffle(q.choices || []));
   }, [questions]);
 
   const correctMap = useMemo(() => {
@@ -103,7 +88,15 @@ export default function QuizDetail() {
             <h1 className="text-2xl font-semibold text-gray-900">{title}</h1>
             <div className="text-sm text-gray-500">{total} câu hỏi</div>
           </div>
-          <Link to="/quizzes" className="text-blue-600 hover:underline">← Danh sách</Link>
+          <div className="flex items-center gap-3">
+            <Link to={`/quizzes/${id}/submit`} className="px-4 py-2 rounded-md bg-green-600 text-white">
+              Làm bài
+            </Link>
+            <Link to={`/quizzes/${id}/stats`} className="px-4 py-2 rounded-md bg-purple-600 text-white">
+              Thống kê
+            </Link>
+            <Link to="/quizzes" className="text-blue-600 hover:underline">← Danh sách</Link>
+          </div>
         </div>
 
         <div className="mb-6 inline-flex rounded-lg border p-1 bg-white">
