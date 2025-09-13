@@ -24,29 +24,39 @@ export default function QuizForm({
           type="text"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          className="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-3 bg-white dark:bg-[#0A092D] text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full rounded-lg border px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          style={{ 
+            backgroundColor: 'var(--bg-primary)', 
+            borderColor: 'var(--border-color)', 
+            color: 'var(--text-primary)' 
+          }}
           placeholder="Ví dụ: Từ vựng Unit 1"
         />
-        <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+        <p className="mt-2 text-xs" style={{ color: 'var(--text-secondary)' }}>
           Nếu để trống, hệ thống sẽ lấy dòng đầu của Text làm title.
         </p>
       </div>
 
       <div>
-        <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+        <label className="block text-sm font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>
           Email người tạo
         </label>
         <input
           type="email"
           value={createdBy}
           onChange={(e) => setCreatedBy(e.target.value)}
-          className="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-3 bg-white dark:bg-[#0A092D] text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full rounded-lg border px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          style={{ 
+            backgroundColor: 'var(--bg-primary)', 
+            borderColor: 'var(--border-color)', 
+            color: 'var(--text-primary)' 
+          }}
           placeholder="you@example.com"
         />
       </div>
 
       <div>
-        <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+        <label className="block text-sm font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>
           Text
         </label>
         <textarea
@@ -61,16 +71,21 @@ export default function QuizForm({
             }
           }}
           rows={16}
-          className="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-3 bg-white dark:bg-[#0A092D] text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 font-mono text-sm leading-6 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full rounded-lg border px-4 py-3 font-mono text-sm leading-6 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          style={{ 
+            backgroundColor: 'var(--bg-primary)', 
+            borderColor: 'var(--border-color)', 
+            color: 'var(--text-primary)' 
+          }}
           placeholder={"Nhập block text theo mẫu..."}
         />
-        <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+        <p className="mt-2 text-xs" style={{ color: 'var(--text-secondary)' }}>
           Body POST sẽ là &#123; title, text, createdBy &#125;.
         </p>
       </div>
 
       {error && (
-        <div className="bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300 px-4 py-3 rounded-lg border border-red-200 dark:border-red-800">
+        <div className="px-4 py-3 rounded-lg border" style={{ backgroundColor: 'rgba(239, 68, 68, 0.1)', color: 'rgb(239, 68, 68)', borderColor: 'rgba(239, 68, 68, 0.3)' }}>
           {error}
         </div>
       )}
@@ -89,7 +104,12 @@ export default function QuizForm({
             setTitle("");
             setText("");
           }}
-          className="px-6 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-[#0A092D] text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#2E3856] transition-colors"
+          className="px-6 py-3 rounded-lg border transition-colors"
+          style={{ 
+            borderColor: 'var(--border-color)', 
+            backgroundColor: 'var(--card-bg)', 
+            color: 'var(--text-secondary)' 
+          }}
         >
           Xóa
         </button>
