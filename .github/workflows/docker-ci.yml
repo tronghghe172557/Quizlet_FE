@@ -40,4 +40,4 @@ jobs:
           script: |
             cd ~/quiz-fe
             docker pull giatrong/quizrise-fe 
-            docker compose -f docker-compose.yml up -d
+            docker compose -f docker-compose.yml --env-file .env up -d
