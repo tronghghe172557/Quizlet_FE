@@ -1,33 +1,34 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-import SignIn from "../component/SignIn";
-import SignUp from "../component/SignUp";
-import Home from "../component/Home";
-import QuizList from "../component/QuizList";
-import QuizDetail from "../component/QuizDetail";
-import QuizCreate from "../component/QuizCreate";
-import SubmitQuiz from "../component/SubmitQuiz";
-import UserSubmissions from "../component/UserSubmissions";
-import QuizStats from "../component/QuizStats";
-import SubmissionDetail from "../component/SubmissionDetail";
+import Layout from "../components/Layout";
+import HomePage from "../pages/Home/HomePage";
+import LoginPage from "../pages/Auth/LoginPage";
+import RegisterPage from "../pages/Auth/RegisterPage";
+import QuizListPage from "../pages/Quiz/QuizListPage";
+import QuizDetailPage from "../pages/Quiz/QuizDetailPage";
+import QuizCreatePage from "../pages/Quiz/QuizCreatePage";
+import SubmitQuiz from "../components/SubmitQuiz";
+import UserSubmissions from "../components/UserSubmissions";
+import QuizStats from "../components/QuizStats";
+import SubmissionDetail from "../components/SubmissionDetail";
 
 export const AppRoutes = () => {
   return (
     <Routes>
       <Route path="/" element={<Navigate to="/quizzes" replace />} />
-      <Route path="/home" element={<Home />} />
-      <Route path="/signin" element={<SignIn />} />
-      <Route path="/signup" element={<SignUp />} />
-
-      {/* Quiz Routes */}
-      <Route path="/quizzes" element={<QuizList />} />
-      <Route path="/quizzes/new" element={<QuizCreate />} />
-      <Route path="/quizzes/:id" element={<QuizDetail />} />
-      <Route path="/quizzes/:id/submit" element={<SubmitQuiz />} />
-      <Route path="/quizzes/:id/stats" element={<QuizStats />} />
       
-      {/* Submission Routes */}
-      <Route path="/submissions" element={<UserSubmissions />} />
-      <Route path="/submissions/:id" element={<SubmissionDetail />} />
+      {/* Auth Routes - No Layout */}
+      <Route path="/signin" element={<LoginPage />} />
+      <Route path="/signup" element={<RegisterPage />} />
+
+      {/* Main Routes - With Layout */}
+      <Route path="/home" element={<Layout><HomePage /></Layout>} />
+      <Route path="/quizzes" element={<Layout><QuizListPage /></Layout>} />
+      <Route path="/quizzes/new" element={<Layout><QuizCreatePage /></Layout>} />
+      <Route path="/quizzes/:id" element={<Layout><QuizDetailPage /></Layout>} />
+      <Route path="/quizzes/:id/submit" element={<Layout><SubmitQuiz /></Layout>} />
+      <Route path="/quizzes/:id/stats" element={<Layout><QuizStats /></Layout>} />
+      <Route path="/submissions" element={<Layout><UserSubmissions /></Layout>} />
+      <Route path="/submissions/:id" element={<Layout><SubmissionDetail /></Layout>} />
     </Routes>
   );
 };

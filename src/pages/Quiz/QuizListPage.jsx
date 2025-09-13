@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { api } from "../utils/api";
+import { api } from "../../utils/api";
+import QuizCard from "../../components/QuizCard";
 
-export default function QuizList() {
+export default function QuizListPage() {
   const [quizzes, setQuizzes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -46,7 +47,7 @@ export default function QuizList() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="bg-gray-50">
       <div className="max-w-5xl mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-semibold text-gray-900">Bộ đề kiểm tra</h1>
@@ -67,21 +68,9 @@ export default function QuizList() {
           <div className="text-gray-500">Không tìm thấy bài kiểm tra phù hợp.</div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filtered.map((q) => {
-              const title = q.title || q.model || "Quiz";
-              const subtitle = q.sourceText?.slice(0, 120) || "";
-              return (
-                <Link key={q._id} to={`/quizzes/${q._id}`} className="group">
-                  <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5 h-full transition hover:shadow-md">
-                    <div className="flex items-start justify-between mb-3">
-                      <div className="text-base font-medium text-gray-900 group-hover:text-blue-600 transition">{title}</div>
-                      <span className="text-xs text-gray-500">{q?.questions?.length || 0} câu</span>
-                    </div>
-                    <p className="text-sm text-gray-500 line-clamp-3">{subtitle}</p>
-                  </div>
-                </Link>
-              );
-            })}
+            {filtered.map((q) => (
+              <QuizCard key={q._id} quiz={q} />
+            ))}
           </div>
         )}
       </div>
