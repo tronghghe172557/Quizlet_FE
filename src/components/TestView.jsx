@@ -1,27 +1,61 @@
 export default function TestView({ questions, shuffledChoicesByQ, selected, onSelect, score, total }) {
   return (
-    <div className="bg-white border rounded-xl shadow-sm">
-      <div className="px-6 py-4 border-b flex items-center justify-between">
-        <div className="text-sm text-gray-600">Điểm: <span className="font-semibold text-gray-900">{score}/{total}</span></div>
+    <div 
+      className="border rounded-2xl shadow-xl"
+      style={{ 
+        backgroundColor: 'var(--card-bg)', 
+        borderColor: 'var(--border-color)' 
+      }}
+    >
+      <div 
+        className="px-8 py-6 border-b flex items-center justify-between"
+        style={{ borderColor: 'var(--border-color)' }}
+      >
+        <div className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>Kiểm tra</div>
+        <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+          Điểm: <span className="font-semibold text-blue-600">{score}/{total}</span>
+        </div>
       </div>
-      <div className="divide-y">
+      <div style={{ borderColor: 'var(--border-color)' }}>
         {questions.map((q, idx) => (
-          <div key={idx} className="p-6">
-            <div className="mb-3 text-gray-900 font-medium">{idx + 1}. {q.prompt}</div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div key={idx} className="p-8" style={{ borderBottom: idx < questions.length - 1 ? '1px solid var(--border-color)' : 'none' }}>
+            <div className="mb-6 text-lg font-medium" style={{ color: 'var(--text-primary)' }}>
+              {idx + 1}. {q.prompt}
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {shuffledChoicesByQ[idx]?.map((c, cIdx) => {
                 const isSelected = selected[idx] === cIdx;
                 const isCorrect = c.isCorrect === true;
-                const base = "px-4 py-3 rounded-lg border transition";
-                const state = isSelected
-                  ? (isCorrect ? "border-green-600 bg-green-50" : "border-red-600 bg-red-50")
-                  : "border-gray-200 bg-white hover:bg-gray-50";
+                
+                let bgColor = 'var(--card-bg)';
+                let borderColor = 'var(--border-color)';
+                let textColor = 'var(--text-primary)';
+                
+                if (isSelected) {
+                  if (isCorrect) {
+                    bgColor = 'rgba(34, 197, 94, 0.1)';
+                    borderColor = 'rgba(34, 197, 94, 0.3)';
+                    textColor = 'rgb(34, 197, 94)';
+                  } else {
+                    bgColor = 'rgba(239, 68, 68, 0.1)';
+                    borderColor = 'rgba(239, 68, 68, 0.3)';
+                    textColor = 'rgb(239, 68, 68)';
+                  }
+                }
+                
                 return (
                   <button
                     key={cIdx}
-                    className={`${base} ${state} text-left`}
+                    className="px-6 py-4 rounded-xl border transition-all cursor-pointer text-left hover:shadow-md"
+                    style={{
+                      backgroundColor: bgColor,
+                      borderColor: borderColor,
+                      color: textColor
+                    }}
                     onClick={() => onSelect(idx, cIdx)}
-                  >{c.text}</button>
+                  >
+                    {c.text}
+                  </button>
                 );
               })}
             </div>

@@ -70,12 +70,18 @@ export default function QuizDetailPage() {
   const total = questions.length;
 
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center text-gray-600">Đang tải...</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--bg-primary)' }}>
+        <div style={{ color: 'var(--text-secondary)' }}>Đang tải...</div>
+      </div>
+    );
   }
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="bg-red-50 text-red-700 px-4 py-3 rounded-lg shadow">{error}</div>
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--bg-primary)' }}>
+        <div className="px-4 py-3 rounded-lg shadow" style={{ backgroundColor: 'rgba(239, 68, 68, 0.1)', color: 'var(--text-primary)', border: '1px solid rgba(239, 68, 68, 0.3)' }}>
+          {error}
+        </div>
       </div>
     );
   }
@@ -83,53 +89,102 @@ export default function QuizDetailPage() {
   const title = quiz?.title || quiz?.model || "Quiz";
 
   return (
-    <div className="bg-gray-50">
-      <div className="max-w-4xl mx-auto px-4 py-6">
-        <div className="flex items-center justify-between mb-6">
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--bg-primary)' }}>
+      <div className="max-w-6xl mx-auto px-4 py-6">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-2xl font-semibold text-gray-900">{title}</h1>
-            <div className="text-sm text-gray-500">{total} câu hỏi</div>
+            <h1 className="text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>{title}</h1>
+            <div className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>
+              {total} thuật ngữ • Tạo bởi {quiz?.createdBy || "Unknown"}
+            </div>
           </div>
           <div className="flex items-center gap-3">
-            <Link to={`/quizzes/${id}/submit`} className="px-4 py-2 rounded-md bg-green-600 text-white">
-              Làm bài
+            <Link 
+              to={`/quizzes/${id}/submit`} 
+              className="px-6 py-3 rounded-lg bg-green-500 hover:bg-green-600 text-white font-medium transition-colors"
+            >
+              Làm bài kiểm tra
             </Link>
-            <Link to={`/quizzes/${id}/stats`} className="px-4 py-2 rounded-md bg-purple-600 text-white">
+            <Link 
+              to={`/quizzes/${id}/stats`} 
+              className="px-6 py-3 rounded-lg bg-purple-500 hover:bg-purple-600 text-white font-medium transition-colors"
+            >
               Thống kê
             </Link>
-            <Link to="/quizzes" className="text-blue-600 hover:underline">← Danh sách</Link>
+            <Link 
+              to="/quizzes" 
+              className="px-4 py-2 rounded-lg border transition-colors"
+              style={{ 
+                borderColor: 'var(--border-color)', 
+                color: 'var(--text-secondary)',
+                backgroundColor: 'var(--card-bg)'
+              }}
+            >
+              ← Quay lại
+            </Link>
           </div>
         </div>
 
-        <div className="mb-6 inline-flex rounded-lg border p-1 bg-white">
-          <button
-            onClick={() => setMode("flashcard")}
-            className={`px-4 py-2 rounded-md text-sm ${mode === "flashcard" ? "bg-blue-600 text-white" : "text-gray-700"}`}
-          >Flashcards</button>
-          <button
-            onClick={() => setMode("test")}
-            className={`px-4 py-2 rounded-md text-sm ${mode === "test" ? "bg-blue-600 text-white" : "text-gray-700"}`}
-          >Kiểm tra</button>
+        {/* Mode Toggle */}
+        <div className="mb-8 flex justify-center">
+          <div 
+            className="inline-flex rounded-xl border p-1"
+            style={{ 
+              borderColor: 'var(--border-color)', 
+              backgroundColor: 'var(--card-bg)' 
+            }}
+          >
+            <button
+              onClick={() => setMode("flashcard")}
+              className={`px-6 py-3 rounded-lg text-sm font-medium transition-all ${
+                mode === "flashcard" 
+                  ? "bg-blue-500 text-white shadow-sm" 
+                  : ""
+              }`}
+              style={{ 
+                color: mode === "flashcard" ? "white" : "var(--text-secondary)" 
+              }}
+            >
+              Flashcards
+            </button>
+            <button
+              onClick={() => setMode("test")}
+              className={`px-6 py-3 rounded-lg text-sm font-medium transition-all ${
+                mode === "test" 
+                  ? "bg-blue-500 text-white shadow-sm" 
+                  : ""
+              }`}
+              style={{ 
+                color: mode === "test" ? "white" : "var(--text-secondary)" 
+              }}
+            >
+              Kiểm tra
+            </button>
+          </div>
         </div>
 
-        {mode === "flashcard" ? (
-          <FlashcardView
-            questions={questions}
-            current={current}
-            setCurrent={setCurrent}
-            showAnswer={showAnswer}
-            setShowAnswer={setShowAnswer}
-          />
-        ) : (
-          <TestView
-            questions={questions}
-            shuffledChoicesByQ={shuffledChoicesByQ}
-            selected={selected}
-            onSelect={handleSelect}
-            score={numCorrect}
-            total={total}
-          />
-        )}
+        {/* Content */}
+        <div className="max-w-4xl mx-auto">
+          {mode === "flashcard" ? (
+            <FlashcardView
+              questions={questions}
+              current={current}
+              setCurrent={setCurrent}
+              showAnswer={showAnswer}
+              setShowAnswer={setShowAnswer}
+            />
+          ) : (
+            <TestView
+              questions={questions}
+              shuffledChoicesByQ={shuffledChoicesByQ}
+              selected={selected}
+              onSelect={handleSelect}
+              score={numCorrect}
+              total={total}
+            />
+          )}
+        </div>
       </div>
     </div>
   );

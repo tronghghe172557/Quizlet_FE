@@ -42,13 +42,21 @@ export default function QuizCreatePage() {
   }
 
   return (
-    <div className="bg-gray-50">
-      <div className="max-w-3xl mx-auto px-4 py-8">
-        <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-semibold text-gray-900">
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--bg-primary)' }}>
+      <div className="max-w-4xl mx-auto px-4 py-8">
+        <div className="flex items-center justify-between mb-8">
+          <h1 className="text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>
             Tạo bài kiểm tra
           </h1>
-          <Link to="/quizzes" className="text-blue-600 hover:underline">
+          <Link 
+            to="/quizzes" 
+            className="px-4 py-2 rounded-lg border transition-colors"
+            style={{ 
+              borderColor: 'var(--border-color)', 
+              color: 'var(--text-secondary)',
+              backgroundColor: 'var(--card-bg)'
+            }}
+          >
             ← Danh sách
           </Link>
         </div>
