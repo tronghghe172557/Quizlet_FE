@@ -4,8 +4,14 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        - VITE_API_BASE_URL=${VITE_API_BASE_URL}
     image: my-form-app:latest
     container_name: my-form-app
     ports:
       - "3052:80"
+    environment:
+      - VITE_API_BASE_URL=${VITE_API_BASE_URL}
+    env_file:
+      - .env
     restart: unless-stopped

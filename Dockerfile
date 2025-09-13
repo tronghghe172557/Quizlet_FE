@@ -4,12 +4,21 @@
 FROM node:20-alpine AS builder
 WORKDIR /app
 
+# Accept build args
+ARG VITE_API_BASE_URL
+ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
+
 # Install deps
 COPY package*.json ./
 RUN npm ci --no-cache
 
-# Copy source and build
+# Copy source
 COPY . .
+
+# Create .env file with build arg
+RUN echo "VITE_API_BASE_URL=$VITE_API_BASE_URL" > .env
+
+# Build the app
 RUN npm run build
 
 # 2) Runtime stage (nginx serving static files)
