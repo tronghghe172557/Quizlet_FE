@@ -1,5 +1,5 @@
 // API Base URLs
-export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:3001";
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://35.240.251.182:3000";
 export const QUIZ_API_URL = `${API_BASE_URL}/api/quizzes`;
 export const SUBMISSION_API_URL = `${API_BASE_URL}/api/submissions`;
 
