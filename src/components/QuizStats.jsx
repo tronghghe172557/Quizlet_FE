@@ -123,7 +123,7 @@ export default function QuizStats() {
                 return (
                   <div key={idx} className="p-6">
                     <div className="mb-3">
-                      <div className="font-medium text-gray-900">
+                      <div className="font-medium text-gray-900 whitespace-pre-line">
                         Câu {idx + 1}: {q.prompt}
                       </div>
                       <div className="text-sm text-gray-500 mt-1">

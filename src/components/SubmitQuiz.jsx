@@ -106,127 +106,143 @@ export default function SubmitQuiz() {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: 'var(--bg-primary)' }}>
-      <div className="max-w-4xl mx-auto px-4 py-6">
-        <div className="flex items-center justify-between mb-6">
+      <div className="max-w-6xl mx-auto px-4 py-6">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-2xl font-semibold" style={{ color: 'var(--text-primary)' }}>{quiz?.title || quiz?.model || "Quiz"}</h1>
-            <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+            <h1 className="text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>{quiz?.title || quiz?.model || "Quiz"}</h1>
+            <div className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>
               {answeredCount}/{questions.length} câu đã trả lời • Thời gian: {utils.formatTime(timeSpent)}
             </div>
           </div>
-          <Link to={`/quizzes/${id}`} className="text-blue-600 hover:underline">← Xem lại</Link>
+          <div className="flex items-center gap-3">
+            <Link 
+              to={`/quizzes/${id}`} 
+              className="px-4 py-2 rounded-lg border transition-colors"
+              style={{ 
+                borderColor: 'var(--border-color)', 
+                color: 'var(--text-secondary)',
+                backgroundColor: 'var(--card-bg)'
+              }}
+            >
+              ← Xem lại
+            </Link>
+          </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div 
-            className="border rounded-xl shadow-sm p-6"
-            style={{ 
-              backgroundColor: 'var(--card-bg)', 
-              borderColor: 'var(--border-color)' 
-            }}
-          >
-            <h2 className="text-lg font-medium mb-4" style={{ color: 'var(--text-primary)' }}>Thông tin nộp bài</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium mb-1" style={{ color: 'var(--text-primary)' }}>Email</label>
-                <input
-                  type="email"
-                  value={userEmail}
-                  onChange={(e) => setUserEmail(e.target.value)}
-                  className="w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  style={{ 
-                    backgroundColor: 'var(--bg-primary)', 
-                    borderColor: 'var(--border-color)', 
-                    color: 'var(--text-primary)' 
-                  }}
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1" style={{ color: 'var(--text-primary)' }}>Thời gian làm bài</label>
-                <input
-                  type="text"
-                  value={utils.formatTime(timeSpent)}
-                  className="w-full rounded-md border px-3 py-2"
-                  style={{ 
-                    backgroundColor: 'var(--bg-secondary)', 
-                    borderColor: 'var(--border-color)', 
-                    color: 'var(--text-secondary)' 
-                  }}
-                  readOnly
-                />
-              </div>
-            </div>
-          </div>
-
-          <div 
-            className="border rounded-xl shadow-sm"
-            style={{ 
-              backgroundColor: 'var(--card-bg)', 
-              borderColor: 'var(--border-color)' 
-            }}
-          >
+        {/* Content */}
+        <div className="max-w-4xl mx-auto">
+          <form onSubmit={handleSubmit} className="space-y-6">
             <div 
-              className="px-6 py-4 border-b"
-              style={{ borderColor: 'var(--border-color)' }}
+              className="border rounded-xl shadow-sm p-6"
+              style={{ 
+                backgroundColor: 'var(--card-bg)', 
+                borderColor: 'var(--border-color)' 
+              }}
             >
-              <h2 className="text-lg font-medium" style={{ color: 'var(--text-primary)' }}>Câu hỏi</h2>
-            </div>
-            <div style={{ borderColor: 'var(--border-color)' }}>
-              {questions.map((q, idx) => (
-                <div key={idx} className="p-6" style={{ borderBottom: idx < questions.length - 1 ? '1px solid var(--border-color)' : 'none' }}>
-                  <div className="mb-4 font-medium" style={{ color: 'var(--text-primary)' }}>
-                    Câu {idx + 1}: {q.prompt}
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {q.choices?.map((c, cIdx) => {
-                      const isSelected = answers[idx] === cIdx;
-                      return (
-                        <label key={cIdx} className="flex items-center space-x-3 cursor-pointer">
-                          <input
-                            type="radio"
-                            name={`question-${idx}`}
-                            checked={isSelected}
-                            onChange={() => handleAnswerSelect(idx, cIdx)}
-                            className="text-blue-600 focus:ring-blue-500"
-                          />
-                          <span className={`px-4 py-3 rounded-lg border transition ${
-                            isSelected 
-                              ? "border-blue-600 bg-blue-50" 
-                              : ""
-                          }`} style={{
-                            backgroundColor: isSelected ? 'rgba(59, 130, 246, 0.1)' : 'var(--card-bg)',
-                            borderColor: isSelected ? 'rgba(59, 130, 246, 0.3)' : 'var(--border-color)',
-                            color: 'var(--text-primary)'
-                          }}>
-                            {c.text}
-                          </span>
-                        </label>
-                      );
-                    })}
-                  </div>
+              <h2 className="text-lg font-medium mb-4" style={{ color: 'var(--text-primary)' }}>Thông tin nộp bài</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-1" style={{ color: 'var(--text-primary)' }}>Email</label>
+                  <input
+                    type="email"
+                    value={userEmail}
+                    onChange={(e) => setUserEmail(e.target.value)}
+                    className="w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    style={{ 
+                      backgroundColor: 'var(--bg-primary)', 
+                      borderColor: 'var(--border-color)', 
+                      color: 'var(--text-primary)' 
+                    }}
+                    required
+                  />
                 </div>
-              ))}
+                <div>
+                  <label className="block text-sm font-medium mb-1" style={{ color: 'var(--text-primary)' }}>Thời gian làm bài</label>
+                  <input
+                    type="text"
+                    value={utils.formatTime(timeSpent)}
+                    className="w-full rounded-md border px-3 py-2"
+                    style={{ 
+                      backgroundColor: 'var(--bg-secondary)', 
+                      borderColor: 'var(--border-color)', 
+                      color: 'var(--text-secondary)' 
+                    }}
+                    readOnly
+                  />
+                </div>
+              </div>
             </div>
-          </div>
 
-          {error && (
-            <div className="px-4 py-3 rounded-md" style={{ backgroundColor: 'rgba(239, 68, 68, 0.1)', color: 'rgb(239, 68, 68)', border: '1px solid rgba(239, 68, 68, 0.3)' }}>{error}</div>
-          )}
-
-          <div className="flex items-center justify-between">
-            <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>
-              {isComplete ? "✅ Đã hoàn thành tất cả câu hỏi" : `⚠️ Còn ${questions.length - answeredCount} câu chưa trả lời`}
-            </div>
-            <button
-              type="submit"
-              disabled={submitting || !isComplete}
-              className="px-6 py-3 rounded-md bg-blue-600 text-white disabled:opacity-50 disabled:cursor-not-allowed"
+            <div 
+              className="border rounded-2xl shadow-xl"
+              style={{ 
+                backgroundColor: 'var(--card-bg)', 
+                borderColor: 'var(--border-color)' 
+              }}
             >
-              {submitting ? "Đang nộp..." : "Nộp bài"}
-            </button>
-          </div>
-        </form>
+              <div 
+                className="px-8 py-6 border-b flex items-center justify-between"
+                style={{ borderColor: 'var(--border-color)' }}
+              >
+                <div className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>Kiểm tra</div>
+                <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+                  Tiến độ: <span className="font-semibold text-blue-600">{answeredCount}/{questions.length}</span>
+                </div>
+              </div>
+              <div style={{ borderColor: 'var(--border-color)' }}>
+                {questions.map((q, idx) => (
+                  <div key={idx} className="p-8" style={{ borderBottom: idx < questions.length - 1 ? '1px solid var(--border-color)' : 'none' }}>
+                    <div className="mb-6 text-lg font-medium whitespace-pre-line" style={{ color: 'var(--text-primary)' }}>
+                      {idx + 1}. {q.prompt}
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {q.choices?.map((c, cIdx) => {
+                        const isSelected = answers[idx] === cIdx;
+                        return (
+                          <button
+                            key={cIdx}
+                            type="button"
+                            className={`px-6 py-4 rounded-xl border transition-all cursor-pointer text-left hover:shadow-md ${
+                              isSelected 
+                                ? "border-blue-600 bg-blue-50" 
+                                : ""
+                            }`}
+                            style={{
+                              backgroundColor: isSelected ? 'rgba(59, 130, 246, 0.1)' : 'var(--card-bg)',
+                              borderColor: isSelected ? 'rgba(59, 130, 246, 0.3)' : 'var(--border-color)',
+                              color: 'var(--text-primary)'
+                            }}
+                            onClick={() => handleAnswerSelect(idx, cIdx)}
+                          >
+                            {c.text}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {error && (
+              <div className="px-4 py-3 rounded-md" style={{ backgroundColor: 'rgba(239, 68, 68, 0.1)', color: 'rgb(239, 68, 68)', border: '1px solid rgba(239, 68, 68, 0.3)' }}>{error}</div>
+            )}
+
+            <div className="flex items-center justify-between">
+              <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+                {isComplete ? "✅ Đã hoàn thành tất cả câu hỏi" : `⚠️ Còn ${questions.length - answeredCount} câu chưa trả lời`}
+              </div>
+              <button
+                type="submit"
+                disabled={submitting || !isComplete}
+                className="px-6 py-3 rounded-lg bg-green-500 hover:bg-green-600 text-white font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {submitting ? "Đang nộp..." : "Nộp bài"}
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );

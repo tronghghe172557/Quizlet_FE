@@ -67,7 +67,7 @@ export default function FlashcardView({ questions, current, setCurrent, showAnsw
                 <div className="text-sm uppercase tracking-wide mb-4 font-medium" style={{ color: 'var(--text-secondary)' }}>
                   Thuật ngữ
                 </div>
-                <div className="text-2xl font-semibold leading-relaxed" style={{ color: 'var(--text-primary)' }}>
+                <div className="text-2xl font-semibold leading-relaxed whitespace-pre-line" style={{ color: 'var(--text-primary)' }}>
                   {q.prompt}
                 </div>
                 <div className="mt-6 text-sm" style={{ color: 'var(--text-secondary)' }}>
@@ -90,7 +90,7 @@ export default function FlashcardView({ questions, current, setCurrent, showAnsw
                 <div className="text-sm uppercase tracking-wide text-blue-600 mb-4 font-medium">
                   Định nghĩa
                 </div>
-                <div className="text-xl font-medium leading-relaxed" style={{ color: 'var(--text-primary)' }}>
+                <div className="text-xl font-medium leading-relaxed whitespace-pre-line" style={{ color: 'var(--text-primary)' }}>
                   {correctAnswer?.text || "Chưa có định nghĩa"}
                 </div>
                 <div className="mt-6 text-sm text-blue-600">

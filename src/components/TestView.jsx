@@ -19,7 +19,7 @@ export default function TestView({ questions, shuffledChoicesByQ, selected, onSe
       <div style={{ borderColor: 'var(--border-color)' }}>
         {questions.map((q, idx) => (
           <div key={idx} className="p-8" style={{ borderBottom: idx < questions.length - 1 ? '1px solid var(--border-color)' : 'none' }}>
-            <div className="mb-6 text-lg font-medium" style={{ color: 'var(--text-primary)' }}>
+            <div className="mb-6 text-lg font-medium whitespace-pre-line" style={{ color: 'var(--text-primary)' }}>
               {idx + 1}. {q.prompt}
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

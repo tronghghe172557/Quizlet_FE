@@ -144,7 +144,7 @@ export default function SubmissionDetail() {
                     <div className="flex items-start gap-3">
                       <span className="text-sm font-medium text-gray-500">Câu {idx + 1}:</span>
                       <div className="flex-1">
-                        <div className="font-medium text-gray-900 mb-2">{question.prompt}</div>
+                        <div className="font-medium text-gray-900 mb-2 whitespace-pre-line">{question.prompt}</div>
                         <div className="text-sm text-gray-500 mb-3">
                           Đáp án đúng: <span className="font-medium text-green-600">{correctChoice?.text}</span>
                         </div>
