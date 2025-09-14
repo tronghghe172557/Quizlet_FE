@@ -1,14 +1,16 @@
-import WelcomeCard from "../../components/WelcomeCard";
+import ContributionGraph from "../../components/ContributionGraph";
 
 export default function HomePage() {
   return (
     <div 
-      className="flex min-h-screen items-center justify-center p-6"
+      className="min-h-screen p-6"
       style={{ 
         background: 'linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%)' 
       }}
     >
-      <WelcomeCard />
+      <div className="max-w-6xl mx-auto">
+        <ContributionGraph />
+      </div>
     </div>
   );
 }

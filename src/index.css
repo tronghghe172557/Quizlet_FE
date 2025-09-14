@@ -119,3 +119,89 @@ body {
 .card-bg {
   background-color: var(--card-bg);
 }
+
+/* Contribution Graph Styles */
+.contribution-graph-container {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+}
+
+.contribution-graph {
+  overflow-x: auto;
+}
+
+.grid-cols-53 {
+  grid-template-columns: repeat(53, 1fr);
+}
+
+.contribution-square {
+  width: 11px;
+  height: 11px;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.contribution-square:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
+}
+
+/* Intensity levels - GitHub-like colors */
+.intensity-0 {
+  background-color: #ebedf0;
+}
+
+.dark .intensity-0 {
+  background-color: #161b22;
+}
+
+.intensity-1 {
+  background-color: #9be9a8;
+}
+
+.dark .intensity-1 {
+  background-color: #0e4429;
+}
+
+.intensity-2 {
+  background-color: #40c463;
+}
+
+.dark .intensity-2 {
+  background-color: #006d32;
+}
+
+.intensity-3 {
+  background-color: #30a14e;
+}
+
+.dark .intensity-3 {
+  background-color: #26a641;
+}
+
+.intensity-4 {
+  background-color: #216e39;
+}
+
+.dark .intensity-4 {
+  background-color: #39d353;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .contribution-square {
+    width: 10px;
+    height: 10px;
+  }
+  
+  .grid-cols-53 {
+    grid-template-columns: repeat(53, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .contribution-square {
+    width: 9px;
+    height: 9px;
+  }
+}

@@ -382,6 +382,36 @@ export const api = {
     }
     return await res.json();
   },
+
+  // Contribution Graph APIs
+  async getContributionGraph({ year, days = 365, endDate } = {}) {
+    const params = new URLSearchParams();
+    if (year) params.append('year', year.toString());
+    if (days) params.append('days', days.toString());
+    if (endDate) params.append('endDate', endDate);
+
+    const res = await makeAuthenticatedRequest(
+      `${SUBMISSION_API_URL}/contributions/graph?${params}`
+    );
+    if (!res.ok) throw new Error("Không tải được contribution graph");
+    return await res.json();
+  },
+
+  async getContributionStreaks() {
+    const res = await makeAuthenticatedRequest(
+      `${SUBMISSION_API_URL}/contributions/streaks`
+    );
+    if (!res.ok) throw new Error("Không tải được streak information");
+    return await res.json();
+  },
+
+  async getContributionSummary() {
+    const res = await makeAuthenticatedRequest(
+      `${SUBMISSION_API_URL}/contributions/summary`
+    );
+    if (!res.ok) throw new Error("Không tải được contribution summary");
+    return await res.json();
+  },
 };
 
 // Utility Functions
