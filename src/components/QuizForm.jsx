@@ -3,7 +3,6 @@ import { utils } from "../utils/api";
 export default function QuizForm({ 
   title, setTitle, 
   text, setText, 
-  createdBy, setCreatedBy, 
   loading, error, 
   onSubmit 
 }) {
@@ -37,23 +36,6 @@ export default function QuizForm({
         </p>
       </div>
 
-      <div>
-        <label className="block text-sm font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>
-          Email người tạo
-        </label>
-        <input
-          type="email"
-          value={createdBy}
-          onChange={(e) => setCreatedBy(e.target.value)}
-          className="w-full rounded-lg border px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          style={{ 
-            backgroundColor: 'var(--bg-primary)', 
-            borderColor: 'var(--border-color)', 
-            color: 'var(--text-primary)' 
-          }}
-          placeholder="you@example.com"
-        />
-      </div>
 
       <div>
         <label className="block text-sm font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>

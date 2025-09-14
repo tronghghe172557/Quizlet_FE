@@ -1,13 +1,14 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { api, utils } from "../../utils/api";
+import { useAuth } from "../../contexts/AuthContext";
 import QuizForm from "../../components/QuizForm";
 
 export default function QuizCreatePage() {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [title, setTitle] = useState("");
   const [text, setText] = useState("");
-  const [createdBy, setCreatedBy] = useState("you@example.com");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -30,9 +31,13 @@ export default function QuizCreatePage() {
       setError("Vui lòng nhập nội dung text");
       return;
     }
+    if (!user?.email) {
+      setError("Vui lòng đăng nhập để tạo quiz");
+      return;
+    }
     try {
       setLoading(true);
-      await api.createQuiz({ title: nextTitle, text, createdBy });
+      await api.createQuiz({ title: nextTitle, text, createdBy: user.email });
       navigate("/quizzes");
     } catch (err) {
       setError(err?.message || "Lỗi không xác định");
@@ -66,8 +71,6 @@ export default function QuizCreatePage() {
           setTitle={setTitle}
           text={text}
           setText={setText}
-          createdBy={createdBy}
-          setCreatedBy={setCreatedBy}
           loading={loading}
           error={error}
           onSubmit={handleSubmit}

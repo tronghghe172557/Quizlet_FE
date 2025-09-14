@@ -1,19 +1,27 @@
 import { useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
 
 export default function RegisterForm() {
+  const { register, isLoading } = useAuth();
+  const navigate = useNavigate();
   const [isTermsOpen, setIsTermsOpen] = useState(false);
+  const [error, setError] = useState("");
 
   const formik = useFormik({
     initialValues: {
+      name: "",
       email: "",
       password: "",
       confirmpassword: "",
       terms: false,
     },
     validationSchema: Yup.object().shape({
+      name: Yup.string()
+        .min(2, "Tên ít nhất 2 ký tự")
+        .required("Vui lòng nhập tên"),
       email: Yup.string()
         .email("Email không hợp lệ")
         .required("Vui lòng nhập email"),
@@ -28,41 +36,92 @@ export default function RegisterForm() {
     }),
     validateOnChange: false,
     validateOnBlur: true,
-    onSubmit: (values) => {
-      alert(JSON.stringify(values, null, 2));
+    onSubmit: async (values) => {
+      setError("");
+      const result = await register(values.name, values.email, values.password);
+      
+      if (result.success) {
+        navigate("/");
+      } else {
+        setError(result.error);
+      }
     },
   });
 
   return (
-    <div className="w-full max-w-md p-8 bg-white rounded-2xl shadow-xl border border-gray-200">
+    <div className="w-full max-w-md p-8 rounded-2xl shadow-xl border" style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--border-color)' }}>
       {/* Back to Home */}
       <div className="mb-4">
         <Link
           to="/"
-          className="text-gray-500 hover:text-gray-700 text-sm flex items-center gap-1"
+          className="text-sm flex items-center gap-1 transition-colors"
+          style={{ color: 'var(--text-secondary)' }}
         >
           ← Back to Home
         </Link>
       </div>
 
       {/* Title */}
-      <h1 className="text-2xl font-bold text-center text-gray-800 mb-6">
+      <h1 className="text-2xl font-bold text-center mb-6" style={{ color: 'var(--text-primary)' }}>
         Đăng ký
       </h1>
-      <p className="text-center text-gray-500 mb-6 text-sm">
+      <p className="text-center mb-6 text-sm" style={{ color: 'var(--text-secondary)' }}>
         Điền thông tin bên dưới để tạo tài khoản
       </p>
 
+      {error && (
+        <div className="mb-4 p-3 border rounded-lg" style={{ backgroundColor: 'rgba(239, 68, 68, 0.1)', borderColor: 'rgba(239, 68, 68, 0.3)' }}>
+          <p className="text-red-600 text-sm text-center">
+            {error}
+          </p>
+        </div>
+      )}
+
       <form onSubmit={formik.handleSubmit} className="space-y-4">
+        {/* Name */}
+        <div>
+          <label className="block text-sm font-medium" style={{ color: 'var(--text-primary)' }}>
+            Tên
+          </label>
+          <input
+            type="text"
+            name="name"
+            className="w-full px-3 py-2 border rounded-lg mt-1 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            style={{ 
+              backgroundColor: 'var(--bg-primary)', 
+              borderColor: 'var(--border-color)', 
+              color: 'var(--text-primary)' 
+            }}
+            value={formik.values.name}
+            onChange={formik.handleChange}
+            onBlur={(e) => {
+              formik.handleBlur(e);
+            }}
+            onFocus={() => {
+              formik.setFieldError("name", "");
+            }}
+          />
+          {formik.touched.name && formik.errors.name && (
+            <p className="text-red-500 text-sm mt-1">
+              {formik.errors.name}
+            </p>
+          )}
+        </div>
+
         {/* Email */}
         <div>
-          <label className="block text-gray-700 text-sm font-medium">
+          <label className="block text-sm font-medium" style={{ color: 'var(--text-primary)' }}>
             Email
           </label>
           <input
             type="email"
             name="email"
             className="w-full px-3 py-2 border rounded-lg mt-1 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            style={{ 
+              backgroundColor: 'var(--bg-primary)', 
+              borderColor: 'var(--border-color)', 
+              color: 'var(--text-primary)' 
+            }}
             value={formik.values.email}
             onChange={formik.handleChange}
             onBlur={(e) => {
@@ -81,13 +140,18 @@ export default function RegisterForm() {
 
         {/* Password */}
         <div>
-          <label className="block text-gray-700 text-sm font-medium">
+          <label className="block text-sm font-medium" style={{ color: 'var(--text-primary)' }}>
             Mật khẩu
           </label>
           <input
             type="password"
             name="password"
             className="w-full px-3 py-2 border rounded-lg mt-1 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            style={{ 
+              backgroundColor: 'var(--bg-primary)', 
+              borderColor: 'var(--border-color)', 
+              color: 'var(--text-primary)' 
+            }}
             value={formik.values.password}
             onChange={formik.handleChange}
             onBlur={(e) => {
@@ -106,13 +170,18 @@ export default function RegisterForm() {
 
         {/* Confirm Password */}
         <div>
-          <label className="block text-gray-700 text-sm font-medium">
+          <label className="block text-sm font-medium" style={{ color: 'var(--text-primary)' }}>
             Xác nhận mật khẩu
           </label>
           <input
             type="password"
             name="confirmpassword"
             className="w-full px-3 py-2 border rounded-lg mt-1 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            style={{ 
+              backgroundColor: 'var(--bg-primary)', 
+              borderColor: 'var(--border-color)', 
+              color: 'var(--text-primary)' 
+            }}
             value={formik.values.confirmpassword}
             onChange={formik.handleChange}
             onBlur={(e) => {
@@ -139,7 +208,7 @@ export default function RegisterForm() {
               checked={formik.values.terms}
               onChange={formik.handleChange}
             />
-            <span className="text-sm text-gray-600">
+            <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>
               Tôi đồng ý với{" "}
               <button
                 type="button"
@@ -181,14 +250,15 @@ export default function RegisterForm() {
         {/* Submit Button */}
         <button
           type="submit"
-          className="w-full py-2 px-4 bg-green-500 text-white rounded-lg hover:bg-green-600 transition"
+          disabled={isLoading}
+          className="w-full py-2 px-4 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:bg-green-300 disabled:cursor-not-allowed transition"
         >
-          Đăng ký
+          {isLoading ? "Đang đăng ký..." : "Đăng ký"}
         </button>
       </form>
 
       {/* Login Link */}
-      <p className="text-center text-gray-600 text-sm mt-6">
+      <p className="text-center text-sm mt-6" style={{ color: 'var(--text-secondary)' }}>
         Đã có tài khoản?{" "}
         <Link to="/signin" className="text-blue-500 hover:underline">
           Đăng nhập

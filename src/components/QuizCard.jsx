@@ -37,7 +37,7 @@ export default function QuizCard({ quiz }) {
           {subtitle}
         </p>
         <div className="mt-4 text-xs" style={{ color: 'var(--text-secondary)' }}>
-          Tạo bởi: {quiz?.createdBy || "Unknown"}
+          Tạo bởi: {typeof quiz?.createdBy === 'object' ? quiz?.createdBy?.email || quiz?.createdBy?.name || "Unknown" : quiz?.createdBy || "Unknown"}
         </div>
       </div>
     </Link>

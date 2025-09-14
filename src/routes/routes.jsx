@@ -10,39 +10,66 @@ import SubmitQuiz from "../components/SubmitQuiz";
 import UserSubmissions from "../components/UserSubmissions";
 import QuizStats from "../components/QuizStats";
 import SubmissionDetail from "../components/SubmissionDetail";
+import { ProtectedRoute, GuestRoute } from "../components/ProtectedRoute";
 
 export const AppRoutes = () => {
   return (
     <Routes>
       <Route path="/" element={<Navigate to="/quizzes" replace />} />
       
-      {/* Auth Routes - No Layout */}
-      <Route path="/signin" element={<LoginPage />} />
-      <Route path="/signup" element={<RegisterPage />} />
+      {/* Auth Routes - Chỉ cho guest (chưa đăng nhập) */}
+      <Route path="/signin" element={
+        <GuestRoute>
+          <LoginPage />
+        </GuestRoute>
+      } />
+      <Route path="/signup" element={
+        <GuestRoute>
+          <RegisterPage />
+        </GuestRoute>
+      } />
 
-      {/* Main Routes - With Layout */}
-      <Route path="/home" element={<Layout><HomePage /></Layout>} />
-      <Route path="/quizzes" element={<Layout><QuizListPage /></Layout>} />
-      <Route path="/quizzes/new" element={<Layout><QuizCreatePage /></Layout>} />
-      <Route path="/quizzes/:id" element={<Layout><QuizDetailPage /></Layout>} />
-      <Route path="/quizzes/:id/submit" element={<Layout><SubmitQuiz /></Layout>} />
-      <Route path="/quizzes/:id/stats" element={<Layout><QuizStats /></Layout>} />
-      <Route path="/submissions" element={<Layout><UserSubmissions /></Layout>} />
-      <Route path="/submissions/:id" element={<Layout><SubmissionDetail /></Layout>} />
+      {/* Main Routes - Cần authentication */}
+      <Route path="/home" element={
+        <ProtectedRoute>
+          <Layout><HomePage /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/quizzes" element={
+        <ProtectedRoute>
+          <Layout><QuizListPage /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/quizzes/new" element={
+        <ProtectedRoute>
+          <Layout><QuizCreatePage /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/quizzes/:id" element={
+        <ProtectedRoute>
+          <Layout><QuizDetailPage /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/quizzes/:id/submit" element={
+        <ProtectedRoute>
+          <Layout><SubmitQuiz /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/quizzes/:id/stats" element={
+        <ProtectedRoute>
+          <Layout><QuizStats /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/submissions" element={
+        <ProtectedRoute>
+          <Layout><UserSubmissions /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/submissions/:id" element={
+        <ProtectedRoute>
+          <Layout><SubmissionDetail /></Layout>
+        </ProtectedRoute>
+      } />
     </Routes>
   );
-};
-
-// Route constants for easy navigation
-export const ROUTES = {
-  HOME: "/home",
-  SIGNIN: "/signin",
-  SIGNUP: "/signup",
-  QUIZZES: "/quizzes",
-  QUIZ_CREATE: "/quizzes/new",
-  QUIZ_DETAIL: (id) => `/quizzes/${id}`,
-  QUIZ_SUBMIT: (id) => `/quizzes/${id}/submit`,
-  QUIZ_STATS: (id) => `/quizzes/${id}/stats`,
-  SUBMISSIONS: "/submissions",
-  SUBMISSION_DETAIL: (id) => `/submissions/${id}`
 };

@@ -1,17 +1,18 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { api, utils } from "../utils/api";
+import { useAuth } from "../contexts/AuthContext";
 
 export default function SubmitQuiz() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [quiz, setQuiz] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
   
   // Form state
-  const [userEmail, setUserEmail] = useState("user@example.com");
   const [answers, setAnswers] = useState({}); // questionIndex -> selectedChoiceIndex
   const [timeSpent, setTimeSpent] = useState(0);
   const [startTime] = useState(Date.now());
@@ -50,8 +51,8 @@ export default function SubmitQuiz() {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    if (!userEmail.trim()) {
-      setError("Vui lòng nhập email");
+    if (!user?.email) {
+      setError("Vui lòng đăng nhập để nộp bài");
       return;
     }
     
@@ -65,7 +66,7 @@ export default function SubmitQuiz() {
       setError("");
       const result = await api.submitQuiz({
         quizId: id,
-        userEmail: userEmail.trim(),
+        userEmail: user.email,
         answers: answerArray,
         timeSpent
       });
@@ -145,16 +146,15 @@ export default function SubmitQuiz() {
                 <div>
                   <label className="block text-sm font-medium mb-1" style={{ color: 'var(--text-primary)' }}>Email</label>
                   <input
-                    type="email"
-                    value={userEmail}
-                    onChange={(e) => setUserEmail(e.target.value)}
-                    className="w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    type="text"
+                    value={user?.email || "Chưa đăng nhập"}
+                    className="w-full rounded-md border px-3 py-2"
                     style={{ 
-                      backgroundColor: 'var(--bg-primary)', 
+                      backgroundColor: 'var(--bg-secondary)', 
                       borderColor: 'var(--border-color)', 
-                      color: 'var(--text-primary)' 
+                      color: 'var(--text-secondary)' 
                     }}
-                    required
+                    readOnly
                   />
                 </div>
                 <div>

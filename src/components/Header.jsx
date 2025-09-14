@@ -1,9 +1,12 @@
 import { Link, useLocation } from "react-router-dom";
 import { useDarkMode } from "../contexts/DarkModeContext";
+import { useAuth } from "../contexts/AuthContext";
+import UserProfile from "./UserProfile";
 
 export default function Header() {
   const location = useLocation();
   const { isDarkMode, toggleDarkMode } = useDarkMode();
+  const { isAuthenticated } = useAuth();
 
   const isActive = (path) => {
     return location.pathname === path || location.pathname.startsWith(path + '/');
@@ -108,19 +111,26 @@ export default function Header() {
               )}
             </button>
 
-            <Link
-              to="/signin"
-              className="text-sm font-medium transition-colors"
-              style={{ color: 'var(--text-secondary)' }}
-            >
-              Đăng nhập
-            </Link>
-            <Link
-              to="/signup"
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
-            >
-              Đăng ký
-            </Link>
+            {/* Auth Section */}
+            {isAuthenticated ? (
+              <UserProfile />
+            ) : (
+              <>
+                <Link
+                  to="/signin"
+                  className="text-sm font-medium transition-colors"
+                  style={{ color: 'var(--text-secondary)' }}
+                >
+                  Đăng nhập
+                </Link>
+                <Link
+                  to="/signup"
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
+                >
+                  Đăng ký
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Mobile menu button */}

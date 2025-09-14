@@ -1,26 +1,29 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api, utils } from "../utils/api";
+import { useAuth } from "../contexts/AuthContext";
 
 export default function UserSubmissions() {
+  const { user } = useAuth();
   const [submissions, setSubmissions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [userEmail, setUserEmail] = useState("user@example.com");
   const [page, setPage] = useState(1);
   const [limit] = useState(10);
 
   useEffect(() => {
-    loadSubmissions();
-  }, [userEmail, page]);
+    if (user?.email) {
+      loadSubmissions();
+    }
+  }, [user?.email, page]);
 
   async function loadSubmissions() {
-    if (!userEmail.trim()) return;
+    if (!user?.email) return;
     
     setLoading(true);
     setError("");
     try {
-      const items = await api.getUserSubmissions({ userEmail, page, limit });
+      const items = await api.getUserSubmissions({ userEmail: user.email, page, limit });
       setSubmissions(items);
     } catch (err) {
       setError(err?.message || "Lỗi không xác định");
@@ -51,40 +54,6 @@ export default function UserSubmissions() {
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-semibold" style={{ color: 'var(--text-primary)' }}>Lịch sử nộp bài</h1>
           <Link to="/quizzes" className="text-blue-600 hover:underline">← Danh sách quiz</Link>
-        </div>
-
-        <div 
-          className="border rounded-xl shadow-sm p-6 mb-6"
-          style={{ 
-            backgroundColor: 'var(--card-bg)', 
-            borderColor: 'var(--border-color)' 
-          }}
-        >
-          <div className="flex items-center gap-4">
-            <div className="flex-1">
-              <label className="block text-sm font-medium mb-1" style={{ color: 'var(--text-primary)' }}>Email người dùng</label>
-              <input
-                type="email"
-                value={userEmail}
-                onChange={(e) => setUserEmail(e.target.value)}
-                className="w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                style={{ 
-                  backgroundColor: 'var(--bg-primary)', 
-                  borderColor: 'var(--border-color)', 
-                  color: 'var(--text-primary)' 
-                }}
-                placeholder="user@example.com"
-              />
-            </div>
-            <div className="pt-6">
-              <button
-                onClick={loadSubmissions}
-                className="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700"
-              >
-                Tìm kiếm
-              </button>
-            </div>
-          </div>
         </div>
 
         {error && (
@@ -118,7 +87,7 @@ export default function UserSubmissions() {
                       {submission.quiz?.title || "Quiz"}
                     </h3>
                     <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
-                      Email: {submission.userEmail}
+                      Email: {user?.email || "N/A"}
                     </p>
                   </div>
                   <div className="text-right text-sm" style={{ color: 'var(--text-secondary)' }}>

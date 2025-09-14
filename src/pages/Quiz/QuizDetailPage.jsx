@@ -96,7 +96,7 @@ export default function QuizDetailPage() {
           <div>
             <h1 className="text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>{title}</h1>
             <div className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>
-              {total} thuật ngữ • Tạo bởi {quiz?.createdBy || "Unknown"}
+              {total} thuật ngữ • Tạo bởi {typeof quiz?.createdBy === 'object' ? quiz?.createdBy?.email || quiz?.createdBy?.name || "Unknown" : quiz?.createdBy || "Unknown"}
             </div>
           </div>
           <div className="flex items-center gap-3">

@@ -87,19 +87,19 @@ export default function SubmissionDetail() {
   const percentage = submission?.scorePercentage || (total > 0 ? Math.round((correct / total) * 100) : 0);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--bg-primary)' }}>
       <div className="max-w-4xl mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-2xl font-semibold text-gray-900">Chi tiết bài nộp</h1>
-            <div className="text-sm text-gray-500">
+            <h1 className="text-2xl font-semibold" style={{ color: 'var(--text-primary)' }}>Chi tiết bài nộp</h1>
+            <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>
               Quiz: {submission?.title || quiz?.title || quiz?.model || "Unknown"} • 
               Email: {submission?.userEmail} • 
               {utils.formatDate(submission?.submittedAt || submission?.createdAt)}
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <Link to={`/quizzes/${submission?.quiz?._id || submission?.quizId}`} className="px-4 py-2 rounded-md bg-blue-600 text-white">
+            <Link to={`/quizzes/${submission?.quiz?._id || submission?.quizId || submission?.quiz}`} className="px-4 py-2 rounded-md bg-blue-600 text-white">
               Xem quiz
             </Link>
             <Link to="/submissions" className="text-blue-600 hover:underline">← Lịch sử</Link>
@@ -107,29 +107,29 @@ export default function SubmissionDetail() {
         </div>
 
         {/* Score Summary */}
-        <div className="bg-white border rounded-xl shadow-sm p-6 mb-6">
+        <div className="border rounded-xl shadow-sm p-6 mb-6" style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--border-color)' }}>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="text-center">
               <div className="text-3xl font-bold text-blue-600">{correct}/{total}</div>
-              <div className="text-sm text-gray-500">Câu đúng</div>
+              <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>Câu đúng</div>
             </div>
             <div className="text-center">
               <div className="text-3xl font-bold text-green-600">{percentage}%</div>
-              <div className="text-sm text-gray-500">Điểm số</div>
+              <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>Điểm số</div>
             </div>
             <div className="text-center">
               <div className="text-3xl font-bold text-purple-600">
                 {utils.formatTime(submission?.timeSpent || 0)}
               </div>
-              <div className="text-sm text-gray-500">Thời gian</div>
+              <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>Thời gian</div>
             </div>
           </div>
         </div>
 
         {/* Answer Details */}
-        <div className="bg-white border rounded-xl shadow-sm">
-          <div className="px-6 py-4 border-b">
-            <h2 className="text-lg font-medium text-gray-900">Chi tiết đáp án</h2>
+        <div className="border rounded-xl shadow-sm" style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--border-color)' }}>
+          <div className="px-6 py-4 border-b" style={{ borderColor: 'var(--border-color)' }}>
+            <h2 className="text-lg font-medium" style={{ color: 'var(--text-primary)' }}>Chi tiết đáp án</h2>
           </div>
           <div className="divide-y">
             {quiz?.questions?.map((question, idx) => {
@@ -139,16 +139,16 @@ export default function SubmissionDetail() {
               const isCorrect = selectedChoice && correctChoice && selectedChoice.text === correctChoice.text;
               
               return (
-                <div key={idx} className="p-6">
+                <div key={idx} className="p-6" style={{ borderColor: 'var(--border-color)' }}>
                   <div className="mb-4">
                     <div className="flex items-start gap-3">
-                      <span className="text-sm font-medium text-gray-500">Câu {idx + 1}:</span>
+                      <span className="text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>Câu {idx + 1}:</span>
                       <div className="flex-1">
-                        <div className="font-medium text-gray-900 mb-2 whitespace-pre-line">{question.prompt}</div>
-                        <div className="text-sm text-gray-500 mb-3">
+                        <div className="font-medium mb-2 whitespace-pre-line" style={{ color: 'var(--text-primary)' }}>{question.prompt}</div>
+                        <div className="text-sm mb-3" style={{ color: 'var(--text-secondary)' }}>
                           Đáp án đúng: <span className="font-medium text-green-600">{correctChoice?.text}</span>
                         </div>
-                        <div className="text-sm text-gray-500">
+                        <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>
                           Bạn chọn: <span className={`font-medium ${isCorrect ? 'text-green-600' : 'text-red-600'}`}>
                             {selectedChoice?.text || "Không trả lời"}
                           </span>
@@ -167,14 +167,28 @@ export default function SubmissionDetail() {
                       const isSelected = answer?.selectedChoiceIndex === cIdx;
                       const isCorrectChoice = choice.isCorrect;
                       
+                      let bgColor, textColor, borderColor;
+                      
+                      if (isCorrectChoice) {
+                        bgColor = 'rgba(34, 197, 94, 0.1)';
+                        textColor = 'rgb(34, 197, 94)';
+                        borderColor = 'rgba(34, 197, 94, 0.3)';
+                      } else if (isSelected) {
+                        bgColor = 'rgba(239, 68, 68, 0.1)';
+                        textColor = 'rgb(239, 68, 68)';
+                        borderColor = 'rgba(239, 68, 68, 0.3)';
+                      } else {
+                        bgColor = 'var(--bg-secondary)';
+                        textColor = 'var(--text-secondary)';
+                        borderColor = 'var(--border-color)';
+                      }
+                      
                       return (
-                        <div key={cIdx} className={`px-3 py-2 rounded text-sm ${
-                          isCorrectChoice 
-                            ? "bg-green-50 text-green-700 border border-green-200" 
-                            : isSelected 
-                              ? "bg-red-50 text-red-700 border border-red-200"
-                              : "bg-gray-50 text-gray-600"
-                        }`}>
+                        <div key={cIdx} className="px-3 py-2 rounded text-sm border" style={{
+                          backgroundColor: bgColor,
+                          color: textColor,
+                          borderColor: borderColor
+                        }}>
                           {cIdx + 1}. {choice.text}
                         </div>
                       );
