@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { api, utils } from "../utils/api";
 import { useAuth } from "../contexts/AuthContext";
@@ -16,6 +16,10 @@ export default function SubmitQuiz() {
   const [answers, setAnswers] = useState({}); // questionIndex -> selectedChoiceIndex
   const [timeSpent, setTimeSpent] = useState(0);
   const [startTime] = useState(Date.now());
+  
+  // Auto-navigation state
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const questionRefs = useRef([]);
 
   useEffect(() => {
     let isMounted = true;
@@ -47,6 +51,29 @@ export default function SubmitQuiz() {
 
   function handleAnswerSelect(questionIndex, choiceIndex) {
     setAnswers(prev => ({ ...prev, [questionIndex]: choiceIndex }));
+    
+    // Auto-scroll to next question after a short delay
+    setTimeout(() => {
+      const nextQuestion = questionIndex + 1;
+      if (nextQuestion < questions.length) {
+        setCurrentQuestion(nextQuestion);
+        scrollToQuestion(nextQuestion);
+      }
+    }, 300);
+  }
+
+  function scrollToQuestion(questionIndex) {
+    if (questionRefs.current[questionIndex]) {
+      questionRefs.current[questionIndex].scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+  }
+
+  function goToQuestion(questionIndex) {
+    setCurrentQuestion(questionIndex);
+    scrollToQuestion(questionIndex);
   }
 
   async function handleSubmit(e) {
@@ -131,6 +158,54 @@ export default function SubmitQuiz() {
           </div>
         </div>
 
+        {/* Question Navigation */}
+        <div className="max-w-4xl mx-auto mb-6">
+          <div 
+            className="border rounded-xl shadow-sm p-4"
+            style={{ 
+              backgroundColor: 'var(--card-bg)', 
+              borderColor: 'var(--border-color)' 
+            }}
+          >
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>
+                Điều hướng câu hỏi
+              </h3>
+              <div className="text-xs" style={{ color: 'var(--text-secondary)' }}>
+                Câu {currentQuestion + 1}/{questions.length}
+              </div>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {questions.map((_, idx) => {
+                const isAnswered = answers[idx] !== undefined;
+                const isCurrent = idx === currentQuestion;
+                
+                return (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={() => goToQuestion(idx)}
+                    className={`px-3 py-1 rounded-md text-sm font-medium transition-all ${
+                      isCurrent 
+                        ? "bg-blue-500 text-white" 
+                        : isAnswered 
+                          ? "bg-green-100 text-green-700 border border-green-300" 
+                          : "bg-gray-100 text-gray-600 border border-gray-300"
+                    }`}
+                    style={{
+                      backgroundColor: isCurrent ? 'rgb(59, 130, 246)' : isAnswered ? 'rgba(34, 197, 94, 0.1)' : 'var(--bg-secondary)',
+                      color: isCurrent ? 'white' : isAnswered ? 'rgb(34, 197, 94)' : 'var(--text-secondary)',
+                      borderColor: isCurrent ? 'transparent' : isAnswered ? 'rgba(34, 197, 94, 0.3)' : 'var(--border-color)'
+                    }}
+                  >
+                    {idx + 1}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
         {/* Content */}
         <div className="max-w-4xl mx-auto">
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -191,37 +266,57 @@ export default function SubmitQuiz() {
                 </div>
               </div>
               <div style={{ borderColor: 'var(--border-color)' }}>
-                {questions.map((q, idx) => (
-                  <div key={idx} className="p-8" style={{ borderBottom: idx < questions.length - 1 ? '1px solid var(--border-color)' : 'none' }}>
-                    <div className="mb-6 text-lg font-medium whitespace-pre-line" style={{ color: 'var(--text-primary)' }}>
-                      {idx + 1}. {q.prompt}
+                {questions.map((q, idx) => {
+                  const isCurrent = idx === currentQuestion;
+                  const isAnswered = answers[idx] !== undefined;
+                  
+                  return (
+                    <div 
+                      key={idx} 
+                      ref={el => questionRefs.current[idx] = el}
+                      className={`p-8 transition-all duration-300 ${
+                        isCurrent ? 'ring-2 ring-blue-500 ring-opacity-50' : ''
+                      }`}
+                      style={{ 
+                        borderBottom: idx < questions.length - 1 ? '1px solid var(--border-color)' : 'none',
+                        backgroundColor: isCurrent ? 'rgba(59, 130, 246, 0.05)' : 'transparent'
+                      }}
+                    >
+                      <div className="mb-6 text-lg font-medium whitespace-pre-line flex items-start gap-3" style={{ color: 'var(--text-primary)' }}>
+                        <span className={`px-2 py-1 rounded-md text-sm font-semibold ${
+                          isCurrent ? 'bg-blue-500 text-white' : isAnswered ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'
+                        }`}>
+                          {idx + 1}
+                        </span>
+                        <span>{q.prompt}</span>
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        {q.choices?.map((c, cIdx) => {
+                          const isSelected = answers[idx] === cIdx;
+                          return (
+                            <button
+                              key={cIdx}
+                              type="button"
+                              className={`px-6 py-4 rounded-xl border transition-all cursor-pointer text-left hover:shadow-md ${
+                                isSelected 
+                                  ? "border-blue-600 bg-blue-50" 
+                                  : ""
+                              }`}
+                              style={{
+                                backgroundColor: isSelected ? 'rgba(59, 130, 246, 0.1)' : 'var(--card-bg)',
+                                borderColor: isSelected ? 'rgba(59, 130, 246, 0.3)' : 'var(--border-color)',
+                                color: 'var(--text-primary)'
+                              }}
+                              onClick={() => handleAnswerSelect(idx, cIdx)}
+                            >
+                              {c.text}
+                            </button>
+                          );
+                        })}
+                      </div>
                     </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      {q.choices?.map((c, cIdx) => {
-                        const isSelected = answers[idx] === cIdx;
-                        return (
-                          <button
-                            key={cIdx}
-                            type="button"
-                            className={`px-6 py-4 rounded-xl border transition-all cursor-pointer text-left hover:shadow-md ${
-                              isSelected 
-                                ? "border-blue-600 bg-blue-50" 
-                                : ""
-                            }`}
-                            style={{
-                              backgroundColor: isSelected ? 'rgba(59, 130, 246, 0.1)' : 'var(--card-bg)',
-                              borderColor: isSelected ? 'rgba(59, 130, 246, 0.3)' : 'var(--border-color)',
-                              color: 'var(--text-primary)'
-                            }}
-                            onClick={() => handleAnswerSelect(idx, cIdx)}
-                          >
-                            {c.text}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
 

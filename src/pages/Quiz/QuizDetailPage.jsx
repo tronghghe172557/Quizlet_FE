@@ -5,6 +5,7 @@ import { useAuth } from "../../contexts/AuthContext";
 import FlashcardView from "../../components/FlashcardView";
 import TestView from "../../components/TestView";
 import QuizSharingModal from "../../components/QuizSharingModal";
+import QuestionList from "../../components/QuestionList";
 
 export default function QuizDetailPage() {
   const { id } = useParams();
@@ -14,7 +15,7 @@ export default function QuizDetailPage() {
   const [error, setError] = useState("");
 
   // Practice state
-  const [mode, setMode] = useState("flashcard"); // flashcard | test
+  const [mode, setMode] = useState("flashcard"); // flashcard | test | manage
   const [current, setCurrent] = useState(0);
   const [selected, setSelected] = useState({}); // questionIndex -> choiceIndex
   const [showAnswer, setShowAnswer] = useState(false);
@@ -25,19 +26,23 @@ export default function QuizDetailPage() {
   // Check if user is admin
   const isAdmin = user?.role === 'admin';
 
+  const loadQuiz = async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const found = await api.getQuizById(id);
+      setQuiz(found);
+    } catch (err) {
+      setError(err?.message || "Lỗi không xác định");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     let isMounted = true;
     async function load() {
-      setLoading(true);
-      setError("");
-      try {
-        const found = await api.getQuizById(id);
-        if (isMounted) setQuiz(found);
-      } catch (err) {
-        if (isMounted) setError(err?.message || "Lỗi không xác định");
-      } finally {
-        if (isMounted) setLoading(false);
-      }
+      await loadQuiz();
     }
     load();
     return () => {
@@ -181,6 +186,21 @@ export default function QuizDetailPage() {
             >
               Kiểm tra
             </button>
+            {isAdmin && (
+              <button
+                onClick={() => setMode("manage")}
+                className={`px-6 py-3 rounded-lg text-sm font-medium transition-all ${
+                  mode === "manage" 
+                    ? "bg-blue-500 text-white shadow-sm" 
+                    : ""
+                }`}
+                style={{ 
+                  color: mode === "manage" ? "white" : "var(--text-secondary)" 
+                }}
+              >
+                Quản lý câu hỏi
+              </button>
+            )}
           </div>
         </div>
 
@@ -194,7 +214,7 @@ export default function QuizDetailPage() {
               showAnswer={showAnswer}
               setShowAnswer={setShowAnswer}
             />
-          ) : (
+          ) : mode === "test" ? (
             <TestView
               questions={questions}
               shuffledChoicesByQ={shuffledChoicesByQ}
@@ -203,7 +223,23 @@ export default function QuizDetailPage() {
               score={numCorrect}
               total={total}
             />
-          )}
+          ) : mode === "manage" && isAdmin ? (
+            <div>
+              <div className="mb-6">
+                <h2 className="text-2xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>
+                  Quản lý câu hỏi
+                </h2>
+                <p style={{ color: 'var(--text-secondary)' }}>
+                  Chỉnh sửa và xóa các câu hỏi trong quiz này
+                </p>
+              </div>
+              <QuestionList
+                questions={questions}
+                quizId={id}
+                onQuestionsUpdate={loadQuiz}
+              />
+            </div>
+          ) : null}
         </div>
 
         {/* Quiz Sharing Modal */}

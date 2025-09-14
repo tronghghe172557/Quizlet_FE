@@ -477,6 +477,51 @@ export const api = {
     if (!res.ok) throw new Error("Không tải được danh sách quiz của tôi");
     return await res.json();
   },
+
+  // Question Management APIs
+  async updateQuestion(quizId, questionIndex, questionData) {
+    const res = await makeAuthenticatedRequest(
+      `${QUIZ_API_URL}/${quizId}/questions/${questionIndex}`,
+      {
+        method: "PUT",
+        body: JSON.stringify(questionData),
+      }
+    );
+    if (!res.ok) {
+      const data = await res.json();
+      throw new Error(data?.message || "Cập nhật câu hỏi thất bại");
+    }
+    return await res.json();
+  },
+
+  async deleteQuestion(quizId, questionIndex) {
+    const res = await makeAuthenticatedRequest(
+      `${QUIZ_API_URL}/${quizId}/questions/${questionIndex}`,
+      {
+        method: "DELETE",
+      }
+    );
+    if (!res.ok) {
+      const data = await res.json();
+      throw new Error(data?.message || "Xóa câu hỏi thất bại");
+    }
+    return await res.json();
+  },
+
+  async addQuestion(quizId, questionData) {
+    const res = await makeAuthenticatedRequest(
+      `${QUIZ_API_URL}/${quizId}/questions`,
+      {
+        method: "POST",
+        body: JSON.stringify(questionData),
+      }
+    );
+    if (!res.ok) {
+      const data = await res.json();
+      throw new Error(data?.message || "Thêm câu hỏi thất bại");
+    }
+    return await res.json();
+  },
 };
 
 // Utility Functions
