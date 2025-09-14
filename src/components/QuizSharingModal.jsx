@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { api } from '../utils/api';
 import UserSelector from './UserSelector';
 import SharedUsersList from './SharedUsersList';
@@ -9,6 +9,24 @@ const QuizSharingModal = ({ quiz, isOpen, onClose, onUpdate }) => {
   const [sharing, setSharing] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
+  const [sharedUsers, setSharedUsers] = useState([]);
+
+  // Fetch shared users when modal opens
+  useEffect(() => {
+    if (isOpen && quiz?._id) {
+      fetchSharedUsers();
+    }
+  }, [isOpen, quiz?._id]);
+
+  const fetchSharedUsers = async () => {
+    try {
+      const response = await api.getSharedUsers(quiz._id);
+      setSharedUsers(response.data.sharedUsers || []);
+    } catch (err) {
+      console.error('Error fetching shared users:', err);
+      // Don't show error to user, just log it
+    }
+  };
 
   const handleShare = async () => {
     if (selectedUsers.length === 0) {
@@ -54,6 +72,7 @@ const QuizSharingModal = ({ quiz, isOpen, onClose, onUpdate }) => {
   };
 
   const handleUpdate = () => {
+    fetchSharedUsers(); // Refresh shared users list
     if (onUpdate) {
       onUpdate();
     }
@@ -134,6 +153,7 @@ const QuizSharingModal = ({ quiz, isOpen, onClose, onUpdate }) => {
                 <UserSelector
                   selectedUsers={selectedUsers}
                   onSelectionChange={setSelectedUsers}
+                  sharedUsers={sharedUsers}
                 />
               </div>
 

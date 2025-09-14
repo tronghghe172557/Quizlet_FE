@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../utils/api';
 
-const UserSelector = ({ selectedUsers, onSelectionChange, excludeUsers = [] }) => {
+const UserSelector = ({ selectedUsers, onSelectionChange, excludeUsers = [], sharedUsers = [] }) => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -112,19 +112,27 @@ const UserSelector = ({ selectedUsers, onSelectionChange, excludeUsers = [] }) =
         ) : (
           users.map(user => {
             const isSelected = selectedUsers.some(u => u._id === user._id);
+            const isShared = sharedUsers.some(u => u._id === user._id);
             
             return (
               <div
                 key={user._id}
                 className={`p-3 border-b border-gray-100 dark:border-gray-700 last:border-b-0 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors ${
                   isSelected ? 'bg-blue-50 dark:bg-blue-900/20' : ''
-                }`}
+                } ${isShared ? 'bg-green-50 dark:bg-green-900/20' : ''}`}
                 onClick={() => handleUserToggle(user)}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
-                    <div className="font-medium text-gray-800 dark:text-white">
-                      {user.name}
+                    <div className="flex items-center gap-2">
+                      <div className="font-medium text-gray-800 dark:text-white">
+                        {user.name}
+                      </div>
+                      {isShared && (
+                        <span className="px-2 py-0.5 text-xs bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 rounded-full">
+                          Đã chia sẻ
+                        </span>
+                      )}
                     </div>
                     <div className="text-sm text-gray-600 dark:text-gray-400">
                       {user.email}
@@ -133,7 +141,10 @@ const UserSelector = ({ selectedUsers, onSelectionChange, excludeUsers = [] }) =
                       Role: {user.role}
                     </div>
                   </div>
-                  <div className="ml-3">
+                  <div className="ml-3 flex items-center gap-2">
+                    {isShared && (
+                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                    )}
                     <input
                       type="checkbox"
                       checked={isSelected}
