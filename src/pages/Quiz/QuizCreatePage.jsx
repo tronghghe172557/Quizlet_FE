@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { api, utils } from "../../utils/api";
 import { useAuth } from "../../contexts/AuthContext";
@@ -9,6 +9,27 @@ export default function QuizCreatePage() {
   const { user } = useAuth();
   const [title, setTitle] = useState("");
   const [text, setText] = useState("");
+  const [model, setModel] = useState("gemini-2.0-flash");
+  const [questionCount, setQuestionCount] = useState(5);
+  
+  // Tính số câu hỏi tự động dựa trên text
+  const autoQuestionCount = useMemo(() => {
+    if (!text.trim()) return 0;
+    const lines = text.split('\n').filter(line => line.trim().length > 0);
+    return lines.length;
+  }, [text]);
+
+  // Cập nhật questionCount khi text thay đổi
+  useEffect(() => {
+    if (autoQuestionCount > 0) {
+      setQuestionCount(autoQuestionCount);
+    }
+  }, [autoQuestionCount]);
+  const [questionType, setQuestionType] = useState("mixed");
+  const [choicesPerQuestion, setChoicesPerQuestion] = useState(4);
+  const [englishLevel, setEnglishLevel] = useState("B1");
+  const [displayLanguage, setDisplayLanguage] = useState("english");
+  const [promptExtension, setPromptExtension] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -37,7 +58,17 @@ export default function QuizCreatePage() {
     }
     try {
       setLoading(true);
-      await api.createQuiz({ title: nextTitle, text, createdBy: user.email });
+      await api.createQuiz({ 
+        title: nextTitle, 
+        text, 
+        model,
+        questionCount,
+        questionType,
+        choicesPerQuestion,
+        englishLevel,
+        displayLanguage,
+        promptExtension
+      });
       navigate("/quizzes");
     } catch (err) {
       setError(err?.message || "Lỗi không xác định");
@@ -71,6 +102,20 @@ export default function QuizCreatePage() {
           setTitle={setTitle}
           text={text}
           setText={setText}
+          model={model}
+          setModel={setModel}
+          questionCount={questionCount}
+          setQuestionCount={setQuestionCount}
+          questionType={questionType}
+          setQuestionType={setQuestionType}
+          choicesPerQuestion={choicesPerQuestion}
+          setChoicesPerQuestion={setChoicesPerQuestion}
+          englishLevel={englishLevel}
+          setEnglishLevel={setEnglishLevel}
+          displayLanguage={displayLanguage}
+          setDisplayLanguage={setDisplayLanguage}
+          promptExtension={promptExtension}
+          setPromptExtension={setPromptExtension}
           loading={loading}
           error={error}
           onSubmit={handleSubmit}

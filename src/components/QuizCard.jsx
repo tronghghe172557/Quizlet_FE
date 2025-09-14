@@ -33,15 +33,28 @@ export default function QuizCard({ quiz, onShare }) {
             >
               {title}
             </div>
-            <span 
-              className="text-sm px-2 py-1 rounded-full whitespace-nowrap ml-2"
-              style={{ 
-                color: 'var(--text-secondary)', 
-                backgroundColor: 'var(--bg-secondary)' 
-              }}
-            >
-              {quiz?.questions?.length || 0} câu
-            </span>
+            <div className="flex flex-col items-end gap-1">
+              <span 
+                className="text-sm px-2 py-1 rounded-full whitespace-nowrap"
+                style={{ 
+                  color: 'var(--text-secondary)', 
+                  backgroundColor: 'var(--bg-secondary)' 
+                }}
+              >
+                {quiz?.questions?.length || 0} câu
+              </span>
+              {quiz?.englishLevel && (
+                <span 
+                  className="text-xs px-2 py-1 rounded-full"
+                  style={{ 
+                    color: 'var(--text-secondary)', 
+                    backgroundColor: 'var(--bg-secondary)' 
+                  }}
+                >
+                  {quiz.englishLevel}
+                </span>
+              )}
+            </div>
           </div>
           <p 
             className="text-sm line-clamp-3 leading-relaxed quiz-card-description"
@@ -49,8 +62,18 @@ export default function QuizCard({ quiz, onShare }) {
           >
             {subtitle}
           </p>
-          <div className="quiz-card-footer pt-4 text-xs" style={{ color: 'var(--text-secondary)' }}>
-            Tạo bởi: {typeof quiz?.createdBy === 'object' ? quiz?.createdBy?.email || quiz?.createdBy?.name || "Unknown" : quiz?.createdBy || "Unknown"}
+          <div className="quiz-card-footer pt-4 text-xs space-y-1" style={{ color: 'var(--text-secondary)' }}>
+            <div>Tạo bởi: {typeof quiz?.createdBy === 'object' ? quiz?.createdBy?.email || quiz?.createdBy?.name || "Unknown" : quiz?.createdBy || "Unknown"}</div>
+            {quiz?.questionType && (
+              <div>Loại: {quiz.questionType === 'mixed' ? 'Hỗn hợp' : 
+                quiz.questionType === 'vocabulary' ? 'Từ vựng' :
+                quiz.questionType === 'grammar' ? 'Ngữ pháp' :
+                quiz.questionType === 'reading' ? 'Đọc hiểu' :
+                quiz.questionType === 'conversation' ? 'Hội thoại' : quiz.questionType}</div>
+            )}
+            {quiz?.model && (
+              <div>Model: {quiz.model}</div>
+            )}
           </div>
         </div>
       </Link>

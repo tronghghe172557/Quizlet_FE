@@ -58,7 +58,7 @@ export default function FlashcardView({ questions, current, setCurrent, showAnsw
               isFlipped ? 'rotate-y-180' : 'rotate-y-0'
             }`}>
               <div 
-                className="border rounded-2xl shadow-xl h-full flex flex-col items-center justify-center text-center p-8"
+                className="border rounded-2xl shadow-xl h-full flex flex-col items-center justify-center text-center p-6"
                 style={{ 
                   backgroundColor: 'var(--card-bg)', 
                   borderColor: 'var(--border-color)' 
@@ -67,7 +67,7 @@ export default function FlashcardView({ questions, current, setCurrent, showAnsw
                 <div className="text-sm uppercase tracking-wide mb-4 font-medium" style={{ color: 'var(--text-secondary)' }}>
                   Thuật ngữ
                 </div>
-                <div className="text-2xl font-semibold leading-relaxed whitespace-pre-line" style={{ color: 'var(--text-primary)' }}>
+                <div className="text-lg font-semibold leading-relaxed whitespace-pre-line overflow-y-auto max-h-64 w-full px-4" style={{ color: 'var(--text-primary)' }}>
                   {q.prompt}
                 </div>
                 <div className="mt-6 text-sm" style={{ color: 'var(--text-secondary)' }}>
@@ -81,7 +81,7 @@ export default function FlashcardView({ questions, current, setCurrent, showAnsw
               isFlipped ? 'rotate-y-0' : 'rotate-y-180'
             }`}>
               <div 
-                className="border rounded-2xl shadow-xl h-full flex flex-col items-center justify-center text-center p-8"
+                className="border rounded-2xl shadow-xl h-full flex flex-col items-center justify-center text-center p-6"
                 style={{ 
                   backgroundColor: 'rgba(59, 130, 246, 0.1)', 
                   borderColor: 'rgba(59, 130, 246, 0.3)' 
@@ -90,7 +90,7 @@ export default function FlashcardView({ questions, current, setCurrent, showAnsw
                 <div className="text-sm uppercase tracking-wide text-blue-600 mb-4 font-medium">
                   Định nghĩa
                 </div>
-                <div className="text-xl font-medium leading-relaxed whitespace-pre-line" style={{ color: 'var(--text-primary)' }}>
+                <div className="text-lg font-medium leading-relaxed whitespace-pre-line overflow-y-auto max-h-64 w-full px-4" style={{ color: 'var(--text-primary)' }}>
                   {correctAnswer?.text || "Chưa có định nghĩa"}
                 </div>
                 <div className="mt-6 text-sm text-blue-600">

@@ -109,8 +109,35 @@ export default function QuizDetailPage() {
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>{title}</h1>
-            <div className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>
-              {total} thuật ngữ • Tạo bởi {typeof quiz?.createdBy === 'object' ? quiz?.createdBy?.email || quiz?.createdBy?.name || "Unknown" : quiz?.createdBy || "Unknown"}
+            <div className="text-sm mt-1 space-y-1" style={{ color: 'var(--text-secondary)' }}>
+              <div>{total} câu hỏi • Tạo bởi {typeof quiz?.createdBy === 'object' ? quiz?.createdBy?.email || quiz?.createdBy?.name || "Unknown" : quiz?.createdBy || "Unknown"}</div>
+              <div className="flex items-center gap-4 text-xs">
+                {quiz?.englishLevel && (
+                  <span className="px-2 py-1 rounded-full" style={{ backgroundColor: 'var(--bg-secondary)' }}>
+                    Trình độ: {quiz.englishLevel}
+                  </span>
+                )}
+                {quiz?.questionType && (
+                  <span className="px-2 py-1 rounded-full" style={{ backgroundColor: 'var(--bg-secondary)' }}>
+                    Loại: {quiz.questionType === 'mixed' ? 'Hỗn hợp' : 
+                      quiz.questionType === 'vocabulary' ? 'Từ vựng' :
+                      quiz.questionType === 'grammar' ? 'Ngữ pháp' :
+                      quiz.questionType === 'reading' ? 'Đọc hiểu' :
+                      quiz.questionType === 'conversation' ? 'Hội thoại' : quiz.questionType}
+                  </span>
+                )}
+                {quiz?.model && (
+                  <span className="px-2 py-1 rounded-full" style={{ backgroundColor: 'var(--bg-secondary)' }}>
+                    Model: {quiz.model}
+                  </span>
+                )}
+                {quiz?.displayLanguage && (
+                  <span className="px-2 py-1 rounded-full" style={{ backgroundColor: 'var(--bg-secondary)' }}>
+                    Ngôn ngữ: {quiz.displayLanguage === 'vietnamese' ? 'Tiếng Việt' : 
+                      quiz.displayLanguage === 'english' ? 'English' : 'Hỗn hợp'}
+                  </span>
+                )}
+              </div>
             </div>
           </div>
           <div className="flex items-center gap-3">

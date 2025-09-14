@@ -136,10 +136,30 @@ export const api = {
     return found;
   },
 
-  async createQuiz({ title, text, createdBy }) {
+  async createQuiz({ 
+    title, 
+    text, 
+    model = 'gemini-2.0-flash',
+    questionCount,
+    questionType,
+    choicesPerQuestion,
+    englishLevel,
+    displayLanguage,
+    promptExtension
+  }) {
+    const payload = { title, text, model };
+    
+    // Thêm các field optional nếu có
+    if (questionCount !== undefined) payload.questionCount = questionCount;
+    if (questionType) payload.questionType = questionType;
+    if (choicesPerQuestion !== undefined) payload.choicesPerQuestion = choicesPerQuestion;
+    if (englishLevel) payload.englishLevel = englishLevel;
+    if (displayLanguage) payload.displayLanguage = displayLanguage;
+    if (promptExtension) payload.promptExtension = promptExtension;
+
     const res = await makeAuthenticatedRequest(QUIZ_API_URL, {
       method: "POST",
-      body: JSON.stringify({ title, text, createdBy }),
+      body: JSON.stringify(payload),
     });
     if (!res.ok) {
       let serverMsg = "";
