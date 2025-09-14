@@ -121,6 +121,7 @@ export default function LoginForm() {
               }}
             />
             <button
+              type="button"
               onClick={() => setShowPassword(!showPassword)}
               className="absolute right-3 top-4 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors">
               {showPassword ? (<EyeSlash size={20} />) : (<Eye size={20} />)}
