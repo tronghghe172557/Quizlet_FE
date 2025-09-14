@@ -11,29 +11,35 @@ export default function SubmissionDetail() {
 
   useEffect(() => {
     loadData();
-  }, [id]);
+  }, [id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   async function loadData() {
     setLoading(true);
     setError("");
     try {
+      console.log('SubmissionDetail - Loading submission with ID:', id);
       // Load submission details
       const submissionData = await api.getSubmissionById(id);
+      console.log('SubmissionDetail - Submission data:', submissionData);
       setSubmission(submissionData);
 
-      // Quiz data is already included in submission response
-      if (submissionData.quiz) {
-        setQuiz(submissionData.quiz);
-      } else {
-        // Fallback: try to load quiz separately if not included
-        try {
-          const quizData = await api.getQuizById(submissionData.quizId);
-          setQuiz(quizData);
-        } catch (err) {
-          console.warn("Could not load quiz separately:", err.message);
+      // Always load quiz separately to get full quiz data with questions
+      try {
+        const quizId = submissionData.quiz?._id || submissionData.quizId;
+        console.log('SubmissionDetail - Loading quiz separately with ID:', quizId);
+        const quizData = await api.getQuizById(quizId);
+        console.log('SubmissionDetail - Quiz data loaded separately:', quizData);
+        setQuiz(quizData);
+      } catch (err) {
+        console.warn("Could not load quiz separately:", err.message);
+        // Fallback: use quiz data from submission if available
+        if (submissionData.quiz) {
+          console.log('SubmissionDetail - Using quiz data from submission as fallback:', submissionData.quiz);
+          setQuiz(submissionData.quiz);
         }
       }
     } catch (err) {
+      console.error('SubmissionDetail - Error loading data:', err);
       setError(err?.message || "Lỗi không xác định");
     } finally {
       setLoading(false);
@@ -132,71 +138,95 @@ export default function SubmissionDetail() {
             <h2 className="text-lg font-medium" style={{ color: 'var(--text-primary)' }}>Chi tiết đáp án</h2>
           </div>
           <div className="divide-y">
-            {quiz?.questions?.map((question, idx) => {
-              const answer = submission?.answers?.find(a => a.questionIndex === idx);
-              const selectedChoice = question.choices?.[answer?.selectedChoiceIndex];
-              const correctChoice = question.choices?.find(c => c.isCorrect);
-              const isCorrect = selectedChoice && correctChoice && selectedChoice.text === correctChoice.text;
-              
-              return (
-                <div key={idx} className="p-6" style={{ borderColor: 'var(--border-color)' }}>
-                  <div className="mb-4">
-                    <div className="flex items-start gap-3">
-                      <span className="text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>Câu {idx + 1}:</span>
-                      <div className="flex-1">
-                        <div className="font-medium mb-2 whitespace-pre-line" style={{ color: 'var(--text-primary)' }}>{question.prompt}</div>
-                        <div className="text-sm mb-3" style={{ color: 'var(--text-secondary)' }}>
-                          Đáp án đúng: <span className="font-medium text-green-600">{correctChoice?.text}</span>
+            {console.log('SubmissionDetail - Rendering questions:', quiz?.questions)}
+            {quiz?.questions?.length > 0 ? (
+              quiz.questions.map((question, idx) => {
+                const answer = submission?.answers?.find(a => a.questionIndex === idx);
+                const selectedChoice = question.choices?.[answer?.selectedChoiceIndex];
+                const correctChoice = question.choices?.find(c => c.isCorrect);
+                const isCorrect = selectedChoice && correctChoice && selectedChoice.text === correctChoice.text;
+                
+                return (
+                  <div key={idx} className="p-6" style={{ borderColor: 'var(--border-color)' }}>
+                    <div className="mb-4">
+                      <div className="flex items-start gap-3">
+                        <span className="text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>Câu {idx + 1}:</span>
+                        <div className="flex-1">
+                          <div className="font-medium mb-2 whitespace-pre-line" style={{ color: 'var(--text-primary)' }}>{question.prompt}</div>
+                          <div className="text-sm mb-3" style={{ color: 'var(--text-secondary)' }}>
+                            Đáp án đúng: <span className="font-medium text-green-600">{correctChoice?.text}</span>
+                          </div>
+                          <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+                            Bạn chọn: <span className={`font-medium ${isCorrect ? 'text-green-600' : 'text-red-600'}`}>
+                              {selectedChoice?.text || "Không trả lời"}
+                            </span>
+                          </div>
                         </div>
-                        <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>
-                          Bạn chọn: <span className={`font-medium ${isCorrect ? 'text-green-600' : 'text-red-600'}`}>
-                            {selectedChoice?.text || "Không trả lời"}
-                          </span>
+                        <div className={`px-2 py-1 rounded text-xs font-medium ${
+                          isCorrect ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                        }`}>
+                          {isCorrect ? 'Đúng' : 'Sai'}
                         </div>
-                      </div>
-                      <div className={`px-2 py-1 rounded text-xs font-medium ${
-                        isCorrect ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-                      }`}>
-                        {isCorrect ? 'Đúng' : 'Sai'}
                       </div>
                     </div>
+                    
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      {question.choices?.map((choice, cIdx) => {
+                        const isSelected = answer?.selectedChoiceIndex === cIdx;
+                        const isCorrectChoice = choice.isCorrect;
+                        
+                        let bgColor, textColor, borderColor;
+                        
+                        if (isCorrectChoice) {
+                          bgColor = 'rgba(34, 197, 94, 0.1)';
+                          textColor = 'rgb(34, 197, 94)';
+                          borderColor = 'rgba(34, 197, 94, 0.3)';
+                        } else if (isSelected) {
+                          bgColor = 'rgba(239, 68, 68, 0.1)';
+                          textColor = 'rgb(239, 68, 68)';
+                          borderColor = 'rgba(239, 68, 68, 0.3)';
+                        } else {
+                          bgColor = 'var(--bg-secondary)';
+                          textColor = 'var(--text-secondary)';
+                          borderColor = 'var(--border-color)';
+                        }
+                        
+                        return (
+                          <div key={cIdx} className="px-3 py-2 rounded text-sm border" style={{
+                            backgroundColor: bgColor,
+                            color: textColor,
+                            borderColor: borderColor
+                          }}>
+                            {cIdx + 1}. {choice.text}
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
-                  
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    {question.choices?.map((choice, cIdx) => {
-                      const isSelected = answer?.selectedChoiceIndex === cIdx;
-                      const isCorrectChoice = choice.isCorrect;
-                      
-                      let bgColor, textColor, borderColor;
-                      
-                      if (isCorrectChoice) {
-                        bgColor = 'rgba(34, 197, 94, 0.1)';
-                        textColor = 'rgb(34, 197, 94)';
-                        borderColor = 'rgba(34, 197, 94, 0.3)';
-                      } else if (isSelected) {
-                        bgColor = 'rgba(239, 68, 68, 0.1)';
-                        textColor = 'rgb(239, 68, 68)';
-                        borderColor = 'rgba(239, 68, 68, 0.3)';
-                      } else {
-                        bgColor = 'var(--bg-secondary)';
-                        textColor = 'var(--text-secondary)';
-                        borderColor = 'var(--border-color)';
-                      }
-                      
-                      return (
-                        <div key={cIdx} className="px-3 py-2 rounded text-sm border" style={{
-                          backgroundColor: bgColor,
-                          color: textColor,
-                          borderColor: borderColor
-                        }}>
-                          {cIdx + 1}. {choice.text}
+                );
+              })
+            ) : (
+              <div className="p-6 text-center" style={{ color: 'var(--text-secondary)' }}>
+                <p>Không có dữ liệu câu hỏi để hiển thị.</p>
+                <p className="text-sm mt-2">
+                  Quiz ID: {submission?.quiz?._id || submission?.quizId} | 
+                  Quiz có questions: {quiz?.questions ? 'Có' : 'Không'} | 
+                  Số câu hỏi: {quiz?.questions?.length || 0}
+                </p>
+                {submission?.answers && (
+                  <div className="mt-4 p-4 bg-gray-100 rounded">
+                    <p className="text-sm font-medium mb-2">Dữ liệu answers từ submission:</p>
+                    <div className="text-xs text-left">
+                      {submission.answers.map((answer, idx) => (
+                        <div key={idx} className="mb-1">
+                          Câu {answer.questionIndex + 1}: Chọn {answer.selectedChoiceIndex + 1} - {answer.isCorrect ? 'Đúng' : 'Sai'}
                         </div>
-                      );
-                    })}
+                      ))}
+                    </div>
                   </div>
-                </div>
-              );
-            })}
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>

@@ -9,5 +9,7 @@ export const ROUTES = {
   QUIZ_SUBMIT: (id) => `/quizzes/${id}/submit`,
   QUIZ_STATS: (id) => `/quizzes/${id}/stats`,
   SUBMISSIONS: "/submissions",
-  SUBMISSION_DETAIL: (id) => `/submissions/${id}`
+  SUBMISSION_DETAIL: (id) => `/submissions/${id}`,
+  REVIEW_SCHEDULE: "/review-schedule",
+  VOCABULARY: "/vocabulary"
 };

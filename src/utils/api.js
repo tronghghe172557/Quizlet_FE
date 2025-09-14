@@ -3,6 +3,8 @@ export const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || "http://35.240.251.182:3000";
 export const QUIZ_API_URL = `${API_BASE_URL}/api/quizzes`;
 export const SUBMISSION_API_URL = `${API_BASE_URL}/api/submissions`;
+export const REVIEW_SCHEDULE_API_URL = `${API_BASE_URL}/api/review-schedule`;
+export const VOCABULARY_API_URL = `${API_BASE_URL}/api/vocabulary`;
 
 // Helper function to get auth headers
 const getAuthHeaders = () => {
@@ -211,6 +213,173 @@ export const api = {
   async getSubmissionById(id) {
     const res = await makeAuthenticatedRequest(`${SUBMISSION_API_URL}/${id}`);
     if (!res.ok) throw new Error("Không tải được chi tiết bài nộp");
+    return await res.json();
+  },
+
+  // Review Schedule APIs
+  async createReviewSchedule({ quizId, reviewInterval }) {
+    const res = await makeAuthenticatedRequest(REVIEW_SCHEDULE_API_URL, {
+      method: "POST",
+      body: JSON.stringify({ quizId, reviewInterval }),
+    });
+    if (!res.ok) {
+      const data = await res.json();
+      throw new Error(data?.message || "Tạo lịch ôn tập thất bại");
+    }
+    return await res.json();
+  },
+
+  async getQuizzesDueForReview(limit = 10) {
+    const params = new URLSearchParams({ limit: limit.toString() });
+    const res = await makeAuthenticatedRequest(
+      `${REVIEW_SCHEDULE_API_URL}/due?${params}`
+    );
+    if (!res.ok) throw new Error("Không tải được danh sách quiz cần ôn tập");
+    const data = await res.json();
+    return Array.isArray(data?.metadata?.quizzes) ? data.metadata.quizzes : [];
+  },
+
+  async getMyReviewSchedules({ page = 1, limit = 10, active = true } = {}) {
+    const params = new URLSearchParams({
+      page: page.toString(),
+      limit: limit.toString(),
+      active: active.toString(),
+    });
+    const res = await makeAuthenticatedRequest(
+      `${REVIEW_SCHEDULE_API_URL}/my?${params}`
+    );
+    if (!res.ok) throw new Error("Không tải được lịch ôn tập");
+    const data = await res.json();
+    return Array.isArray(data?.metadata?.schedules) ? data.metadata.schedules : [];
+  },
+
+  async updateReviewAfterSubmission(scheduleId, { submissionId }) {
+    const res = await makeAuthenticatedRequest(
+      `${REVIEW_SCHEDULE_API_URL}/${scheduleId}/complete`,
+      {
+        method: "PATCH",
+        body: JSON.stringify({ submissionId }),
+      }
+    );
+    if (!res.ok) {
+      const data = await res.json();
+      throw new Error(data?.message || "Cập nhật lịch ôn tập thất bại");
+    }
+    return await res.json();
+  },
+
+  async updateReviewScheduleSettings(scheduleId, { reviewInterval, isActive }) {
+    const res = await makeAuthenticatedRequest(
+      `${REVIEW_SCHEDULE_API_URL}/${scheduleId}`,
+      {
+        method: "PATCH",
+        body: JSON.stringify({ reviewInterval, isActive }),
+      }
+    );
+    if (!res.ok) {
+      const data = await res.json();
+      throw new Error(data?.message || "Cập nhật cài đặt lịch ôn tập thất bại");
+    }
+    return await res.json();
+  },
+
+  async deleteReviewSchedule(scheduleId) {
+    const res = await makeAuthenticatedRequest(
+      `${REVIEW_SCHEDULE_API_URL}/${scheduleId}`,
+      {
+        method: "DELETE",
+      }
+    );
+    if (!res.ok) {
+      const data = await res.json();
+      throw new Error(data?.message || "Xóa lịch ôn tập thất bại");
+    }
+    return await res.json();
+  },
+
+  async getReviewStatistics() {
+    const res = await makeAuthenticatedRequest(
+      `${REVIEW_SCHEDULE_API_URL}/statistics`
+    );
+    if (!res.ok) throw new Error("Không tải được thống kê ôn tập");
+    return await res.json();
+  },
+
+  // Vocabulary APIs
+  async getTodayVocabulary() {
+    const res = await makeAuthenticatedRequest(`${VOCABULARY_API_URL}/today`);
+    if (!res.ok) throw new Error("Không tải được từ vựng hôm nay");
+    const data = await res.json();
+    console.log("API Response - getTodayVocabulary:", data); // Debug log
+    return data;
+  },
+
+  async markWordAsLearned(wordIndex) {
+    const res = await makeAuthenticatedRequest(`${VOCABULARY_API_URL}/learn`, {
+      method: "PATCH",
+      body: JSON.stringify({ wordIndex }),
+    });
+    if (!res.ok) {
+      const data = await res.json();
+      throw new Error(data?.message || "Đánh dấu từ đã học thất bại");
+    }
+    return await res.json();
+  },
+
+  async getVocabularyHistory({ page = 1, limit = 7 } = {}) {
+    const params = new URLSearchParams({
+      page: page.toString(),
+      limit: limit.toString(),
+    });
+    const res = await makeAuthenticatedRequest(
+      `${VOCABULARY_API_URL}/history?${params}`
+    );
+    if (!res.ok) throw new Error("Không tải được lịch sử học từ vựng");
+    const data = await res.json();
+    return Array.isArray(data?.metadata?.history) ? data.metadata.history : [];
+  },
+
+  async getVocabularyStatistics() {
+    const res = await makeAuthenticatedRequest(
+      `${VOCABULARY_API_URL}/statistics`
+    );
+    if (!res.ok) throw new Error("Không tải được thống kê từ vựng");
+    return await res.json();
+  },
+
+  async getWordsForReview(limit = 20) {
+    const params = new URLSearchParams({ limit: limit.toString() });
+    const res = await makeAuthenticatedRequest(
+      `${VOCABULARY_API_URL}/review?${params}`
+    );
+    if (!res.ok) throw new Error("Không tải được từ vựng để ôn tập");
+    const data = await res.json();
+    return Array.isArray(data?.metadata?.words) ? data.metadata.words : [];
+  },
+
+  async updateVocabularyPreferences({ dailyWordGoal, reminderTime, difficultyLevel }) {
+    const res = await makeAuthenticatedRequest(
+      `${VOCABULARY_API_URL}/preferences`,
+      {
+        method: "PATCH",
+        body: JSON.stringify({ dailyWordGoal, reminderTime, difficultyLevel }),
+      }
+    );
+    if (!res.ok) {
+      const data = await res.json();
+      throw new Error(data?.message || "Cập nhật preferences thất bại");
+    }
+    return await res.json();
+  },
+
+  async resetVocabularyProgress() {
+    const res = await makeAuthenticatedRequest(`${VOCABULARY_API_URL}/reset`, {
+      method: "DELETE",
+    });
+    if (!res.ok) {
+      const data = await res.json();
+      throw new Error(data?.message || "Reset tiến trình thất bại");
+    }
     return await res.json();
   },
 };

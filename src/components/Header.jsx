@@ -72,6 +72,36 @@ export default function Header() {
             </Link>
             
             <Link
+              to="/review-schedule"
+              className={`px-3 py-2 rounded-md text-sm font-medium transition ${
+                isActive('/review-schedule') 
+                  ? 'bg-blue-100 text-blue-700' 
+                  : 'hover:bg-gray-100'
+              }`}
+              style={{ 
+                color: isActive('/review-schedule') ? 'var(--text-primary)' : 'var(--text-secondary)',
+                backgroundColor: isActive('/review-schedule') ? 'rgba(59, 130, 246, 0.1)' : 'transparent'
+              }}
+            >
+              Lịch ôn tập
+            </Link>
+            
+            <Link
+              to="/vocabulary"
+              className={`px-3 py-2 rounded-md text-sm font-medium transition ${
+                isActive('/vocabulary') 
+                  ? 'bg-blue-100 text-blue-700' 
+                  : 'hover:bg-gray-100'
+              }`}
+              style={{ 
+                color: isActive('/vocabulary') ? 'var(--text-primary)' : 'var(--text-secondary)',
+                backgroundColor: isActive('/vocabulary') ? 'rgba(59, 130, 246, 0.1)' : 'transparent'
+              }}
+            >
+              Từ vựng
+            </Link>
+            
+            <Link
               to="/home"
               className={`px-3 py-2 rounded-md text-sm font-medium transition ${
                 isActive('/home') 

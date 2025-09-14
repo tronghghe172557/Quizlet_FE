@@ -53,13 +53,13 @@ export default function QuizStats() {
   }
 
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center text-gray-600">Đang tải...</div>;
+    return <div className="min-h-screen flex items-center justify-center" style={{ color: 'var(--text-secondary)' }}>Đang tải...</div>;
   }
 
   if (error) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="bg-red-50 text-red-700 px-4 py-3 rounded-lg shadow">{error}</div>
+        <div className="px-4 py-3 rounded-lg shadow" style={{ backgroundColor: '#fef2f2', color: '#dc2626' }}>{error}</div>
       </div>
     );
   }
@@ -70,14 +70,14 @@ export default function QuizStats() {
   const averageTime = stats?.averageTime || 0;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--bg-primary)' }}>
       <div className="max-w-6xl mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-2xl font-semibold text-gray-900">
+            <h1 className="text-2xl font-semibold" style={{ color: 'var(--text-primary)' }}>
               Thống kê: {quiz?.title || quiz?.model || "Quiz"}
             </h1>
-            <div className="text-sm text-gray-500">
+            <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>
               {questions.length} câu hỏi • {totalSubmissions} lượt nộp bài
             </div>
           </div>
@@ -93,48 +93,48 @@ export default function QuizStats() {
 
         {/* Stats Overview */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white border rounded-xl shadow-sm p-6">
+          <div className="border rounded-xl shadow-sm p-6" style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--border-color)' }}>
             <div className="text-2xl font-bold text-blue-600">{totalSubmissions}</div>
-            <div className="text-sm text-gray-500">Tổng lượt nộp bài</div>
+            <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>Tổng lượt nộp bài</div>
           </div>
-          <div className="bg-white border rounded-xl shadow-sm p-6">
+          <div className="border rounded-xl shadow-sm p-6" style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--border-color)' }}>
             <div className="text-2xl font-bold text-green-600">
               {averageScore.toFixed(1)}/{questions.length}
             </div>
-            <div className="text-sm text-gray-500">Điểm trung bình</div>
+            <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>Điểm trung bình</div>
           </div>
-          <div className="bg-white border rounded-xl shadow-sm p-6">
+          <div className="border rounded-xl shadow-sm p-6" style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--border-color)' }}>
             <div className="text-2xl font-bold text-purple-600">
               {formatTime(averageTime)}
             </div>
-            <div className="text-sm text-gray-500">Thời gian trung bình</div>
+            <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>Thời gian trung bình</div>
           </div>
         </div>
 
         {/* Question Statistics */}
         {questions.length > 0 && (
-          <div className="bg-white border rounded-xl shadow-sm mb-8">
-            <div className="px-6 py-4 border-b">
-              <h2 className="text-lg font-medium text-gray-900">Thống kê từng câu hỏi</h2>
+          <div className="border rounded-xl shadow-sm mb-8" style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--border-color)' }}>
+            <div className="px-6 py-4 border-b" style={{ borderColor: 'var(--border-color)' }}>
+              <h2 className="text-lg font-medium" style={{ color: 'var(--text-primary)' }}>Thống kê từng câu hỏi</h2>
             </div>
-            <div className="divide-y">
+            <div className="divide-y" style={{ borderColor: 'var(--border-color)' }}>
               {questions.map((q, idx) => {
                 const correctChoice = q.choices?.find(c => c.isCorrect);
                 return (
                   <div key={idx} className="p-6">
                     <div className="mb-3">
-                      <div className="font-medium text-gray-900 whitespace-pre-line">
+                      <div className="font-medium whitespace-pre-line" style={{ color: 'var(--text-primary)' }}>
                         Câu {idx + 1}: {q.prompt}
                       </div>
-                      <div className="text-sm text-gray-500 mt-1">
+                      <div className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>
                         Đáp án đúng: {correctChoice?.text || "Chưa có"}
                       </div>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                       {q.choices?.map((c, cIdx) => (
                         <div key={cIdx} className={`px-3 py-2 rounded text-sm ${
-                          c.isCorrect ? "bg-green-50 text-green-700" : "bg-gray-50 text-gray-600"
-                        }`}>
+                          c.isCorrect ? "bg-green-50 text-green-700" : ""
+                        }`} style={!c.isCorrect ? { backgroundColor: 'var(--bg-secondary)', color: 'var(--text-secondary)' } : {}}>
                           {cIdx + 1}. {c.text}
                         </div>
                       ))}
@@ -147,28 +147,28 @@ export default function QuizStats() {
         )}
 
         {/* Recent Submissions */}
-        <div className="bg-white border rounded-xl shadow-sm">
-          <div className="px-6 py-4 border-b">
-            <h2 className="text-lg font-medium text-gray-900">Bài nộp gần đây</h2>
+        <div className="border rounded-xl shadow-sm" style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--border-color)' }}>
+          <div className="px-6 py-4 border-b" style={{ borderColor: 'var(--border-color)' }}>
+            <h2 className="text-lg font-medium" style={{ color: 'var(--text-primary)' }}>Bài nộp gần đây</h2>
           </div>
           {submissions.length === 0 ? (
-            <div className="p-8 text-center text-gray-500">
+            <div className="p-8 text-center" style={{ color: 'var(--text-secondary)' }}>
               Chưa có bài nộp nào.
             </div>
           ) : (
-            <div className="divide-y">
+            <div className="divide-y" style={{ borderColor: 'var(--border-color)' }}>
               {submissions.map((submission) => (
                 <div key={submission._id} className="p-6">
                   <div className="flex items-center justify-between mb-2">
-                    <div className="font-medium text-gray-900">
+                    <div className="font-medium" style={{ color: 'var(--text-primary)' }}>
                       {submission.userEmail}
                     </div>
-                    <div className="text-sm text-gray-500">
+                    <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>
                       {formatDate(submission.createdAt)}
                     </div>
                   </div>
                   <div className="flex items-center justify-between">
-                    <div className="text-sm text-gray-600">
+                    <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>
                       Điểm: {submission.score || 0}/{submission.totalQuestions || questions.length} • 
                       Thời gian: {formatTime(submission.timeSpent)}
                     </div>

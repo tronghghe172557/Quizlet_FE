@@ -10,6 +10,8 @@ import SubmitQuiz from "../components/SubmitQuiz";
 import UserSubmissions from "../components/UserSubmissions";
 import QuizStats from "../components/QuizStats";
 import SubmissionDetail from "../components/SubmissionDetail";
+import ReviewScheduleList from "../components/ReviewScheduleList";
+import VocabularyList from "../components/VocabularyList";
 import { ProtectedRoute, GuestRoute } from "../components/ProtectedRoute";
 
 export const AppRoutes = () => {
@@ -68,6 +70,16 @@ export const AppRoutes = () => {
       <Route path="/submissions/:id" element={
         <ProtectedRoute>
           <Layout><SubmissionDetail /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/review-schedule" element={
+        <ProtectedRoute>
+          <Layout><ReviewScheduleList /></Layout>
+        </ProtectedRoute>
+      } />
+      <Route path="/vocabulary" element={
+        <ProtectedRoute>
+          <Layout><VocabularyList /></Layout>
         </ProtectedRoute>
       } />
     </Routes>
