@@ -43,21 +43,24 @@ const VocabularyCard = ({ word, index, onMarkLearned, isLearned }) => {
   };
 
   return (
-    <div className={`bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border-2 transition-all duration-200 ${
+    <div className={`rounded-lg shadow-md p-6 border-2 transition-all duration-200 ${
       isLearned 
-        ? 'border-green-300 bg-green-50 dark:bg-green-900/20' 
-        : 'border-gray-200 dark:border-gray-700 hover:border-blue-300'
-    }`}>
+        ? 'border-green-300' 
+        : 'hover:border-blue-300'
+    }`} style={{ 
+      backgroundColor: isLearned ? 'var(--card-bg)' : 'var(--card-bg)',
+      borderColor: isLearned ? '#10b981' : 'var(--border-color)'
+    }}>
       <div className="flex justify-between items-start mb-4">
         <div className="flex-1">
-          <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+          <h3 className="text-xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>
             {word.word}
           </h3>
-          <p className="text-lg text-gray-700 dark:text-gray-300 mb-2">
+          <p className="text-lg mb-2" style={{ color: 'var(--text-primary)' }}>
             {word.meaning}
           </p>
           {word.pronunciation && (
-            <p className="text-sm text-gray-500 dark:text-gray-400 italic">
+            <p className="text-sm italic" style={{ color: 'var(--text-secondary)' }}>
               /{word.pronunciation}/
             </p>
           )}
@@ -74,8 +77,11 @@ const VocabularyCard = ({ word, index, onMarkLearned, isLearned }) => {
 
       {word.example && (
         <div className="mb-4">
-          <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Ví dụ:</p>
-          <p className="text-sm italic text-gray-800 dark:text-gray-200 bg-gray-100 dark:bg-gray-700 p-2 rounded">
+          <p className="text-sm mb-1" style={{ color: 'var(--text-secondary)' }}>Ví dụ:</p>
+          <p className="text-sm italic p-2 rounded" style={{ 
+            color: 'var(--text-primary)', 
+            backgroundColor: 'var(--bg-secondary)' 
+          }}>
             "{word.example}"
           </p>
         </div>
@@ -84,7 +90,8 @@ const VocabularyCard = ({ word, index, onMarkLearned, isLearned }) => {
       <div className="flex justify-between items-center">
         <button
           onClick={() => setShowDetails(!showDetails)}
-          className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 text-sm font-medium"
+          className="text-sm font-medium"
+          style={{ color: '#3b82f6' }}
         >
           {showDetails ? 'Ẩn chi tiết' : 'Xem chi tiết'}
         </button>
@@ -103,17 +110,17 @@ const VocabularyCard = ({ word, index, onMarkLearned, isLearned }) => {
       </div>
 
       {showDetails && (
-        <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+        <div className="mt-4 pt-4" style={{ borderTop: '1px solid var(--border-color)' }}>
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div>
-              <p className="text-gray-600 dark:text-gray-400">Số lần ôn tập</p>
-              <p className="font-medium text-gray-900 dark:text-white">
+              <p style={{ color: 'var(--text-secondary)' }}>Số lần ôn tập</p>
+              <p className="font-medium" style={{ color: 'var(--text-primary)' }}>
                 {word.reviewCount || 0}
               </p>
             </div>
             <div>
-              <p className="text-gray-600 dark:text-gray-400">Lần ôn tập cuối</p>
-              <p className="font-medium text-gray-900 dark:text-white">
+              <p style={{ color: 'var(--text-secondary)' }}>Lần ôn tập cuối</p>
+              <p className="font-medium" style={{ color: 'var(--text-primary)' }}>
                 {word.lastReviewedAt 
                   ? new Date(word.lastReviewedAt).toLocaleDateString('vi-VN')
                   : 'Chưa có'

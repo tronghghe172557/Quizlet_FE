@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { api, utils } from '../utils/api';
+import React from 'react';
+import { utils } from '../utils/api';
 
-const ReviewScheduleCard = ({ schedule, onDelete }) => {
+const ReviewScheduleCard = ({ schedule }) => {
   const getDifficultyColor = (level) => {
     switch (level) {
       case 'easy': return 'text-green-600 bg-green-100';
@@ -16,10 +16,13 @@ const ReviewScheduleCard = ({ schedule, onDelete }) => {
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700">
+    <div className="rounded-lg shadow-md p-6 border" style={{ 
+      backgroundColor: 'var(--card-bg)',
+      borderColor: 'var(--border-color)'
+    }}>
       <div className="flex justify-between items-start mb-4">
         <div className="flex-1">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+          <h3 className="text-lg font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>
             {schedule.quiz?.title || 'Quiz không xác định'}
           </h3>
           <div className="flex flex-wrap gap-2 mb-3">
@@ -46,14 +49,14 @@ const ReviewScheduleCard = ({ schedule, onDelete }) => {
 
       <div className="grid grid-cols-2 gap-4 mb-4">
         <div>
-          <p className="text-sm text-gray-600 dark:text-gray-400">Lần ôn tập</p>
-          <p className="text-lg font-semibold text-gray-900 dark:text-white">
+          <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Lần ôn tập</p>
+          <p className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>
             {schedule.reviewCount || 0}
           </p>
         </div>
         <div>
-          <p className="text-sm text-gray-600 dark:text-gray-400">Điểm trung bình</p>
-          <p className="text-lg font-semibold text-gray-900 dark:text-white">
+          <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Điểm trung bình</p>
+          <p className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>
             {schedule.averageScore || 0}%
           </p>
         </div>
@@ -61,21 +64,21 @@ const ReviewScheduleCard = ({ schedule, onDelete }) => {
 
       <div className="space-y-2">
         <div>
-          <p className="text-sm text-gray-600 dark:text-gray-400">Lần ôn tập cuối</p>
-          <p className="text-sm text-gray-900 dark:text-white">
+          <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Lần ôn tập cuối</p>
+          <p className="text-sm" style={{ color: 'var(--text-primary)' }}>
             {schedule.lastReviewedAt ? utils.formatDate(schedule.lastReviewedAt) : 'Chưa có'}
           </p>
         </div>
         <div>
-          <p className="text-sm text-gray-600 dark:text-gray-400">Lần ôn tập tiếp theo</p>
-          <p className="text-sm text-gray-900 dark:text-white">
+          <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>Lần ôn tập tiếp theo</p>
+          <p className="text-sm" style={{ color: 'var(--text-primary)' }}>
             {schedule.nextReviewAt ? utils.formatDate(schedule.nextReviewAt) : 'Chưa có'}
           </p>
         </div>
       </div>
 
       {schedule.needsReview && (
-        <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+        <div className="mt-4 pt-4" style={{ borderTop: '1px solid var(--border-color)' }}>
           <button
             onClick={() => window.location.href = `/quiz/${schedule.quiz?._id}`}
             className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors"

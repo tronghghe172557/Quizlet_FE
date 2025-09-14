@@ -139,15 +139,15 @@ const ContributionGraph = () => {
   }
 
   return (
-    <div className="contribution-graph-container bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+    <div className="contribution-graph-container rounded-lg shadow-lg p-6" style={{ backgroundColor: 'var(--card-bg)' }}>
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-center space-x-4">
-          <h2 className="text-xl font-semibold text-gray-800 dark:text-white">
+          <h2 className="text-xl font-semibold" style={{ color: 'var(--text-primary)' }}>
             Hoạt động học tập {selectedYear}
           </h2>
           {graphData.stats && (
-            <span className="text-sm text-gray-600 dark:text-gray-300">
+            <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>
               {graphData.stats.totalContributions} contributions trong {graphData.stats.activeDays} ngày
             </span>
           )}
@@ -157,7 +157,12 @@ const ContributionGraph = () => {
           <select
             value={selectedYear}
             onChange={(e) => setSelectedYear(parseInt(e.target.value))}
-            className="px-3 py-1 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-white"
+            className="px-3 py-1 border rounded"
+            style={{ 
+              borderColor: 'var(--border-color)', 
+              backgroundColor: 'var(--card-bg)', 
+              color: 'var(--text-primary)' 
+            }}
           >
             {generateYearOptions().map(year => (
               <option key={year} value={year}>{year}</option>
@@ -168,27 +173,30 @@ const ContributionGraph = () => {
 
       {/* Streak Info */}
       {streakData && (
-        <div className="mb-6 p-4 bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20 rounded-lg border border-orange-200 dark:border-orange-800">
+        <div className="mb-6 p-4 rounded-lg border" style={{ 
+          background: 'linear-gradient(135deg, rgba(251, 146, 60, 0.1) 0%, rgba(239, 68, 68, 0.1) 100%)',
+          borderColor: 'rgba(251, 146, 60, 0.3)'
+        }}>
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <div className="text-center">
                 <div className="text-2xl font-bold text-orange-600 dark:text-orange-400">
                   🔥 {streakData.currentStreak}
                 </div>
-                <div className="text-sm text-gray-600 dark:text-gray-300">Ngày liên tiếp</div>
+                <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>Ngày liên tiếp</div>
               </div>
               <div className="text-center">
-                <div className="text-xl font-bold text-gray-700 dark:text-gray-200">
+                <div className="text-xl font-bold" style={{ color: 'var(--text-primary)' }}>
                   🏆 {streakData.longestStreak}
                 </div>
-                <div className="text-sm text-gray-600 dark:text-gray-300">Kỷ lục</div>
+                <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>Kỷ lục</div>
               </div>
             </div>
             <div className="text-right">
-              <p className="text-sm text-gray-700 dark:text-gray-200 font-medium">
+              <p className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>
                 {streakData.streakInfo.message}
               </p>
-              <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+              <p className="text-xs mt-1" style={{ color: 'var(--text-secondary)' }}>
                 {streakData.streakInfo.motivation}
               </p>
             </div>
@@ -202,7 +210,7 @@ const ContributionGraph = () => {
         <div className="flex mb-2">
           <div className="w-8"></div> {/* Space for weekday labels */}
           {months.map((month, index) => (
-            <div key={index} className="flex-1 text-xs text-gray-600 dark:text-gray-400 text-center">
+            <div key={index} className="flex-1 text-xs text-center" style={{ color: 'var(--text-secondary)' }}>
               {month}
             </div>
           ))}
@@ -211,7 +219,7 @@ const ContributionGraph = () => {
         {/* Graph Grid */}
         <div className="flex">
           {/* Weekday Labels */}
-          <div className="w-8 flex flex-col justify-around text-xs text-gray-600 dark:text-gray-400">
+          <div className="w-8 flex flex-col justify-around text-xs" style={{ color: 'var(--text-secondary)' }}>
             {weekdays.map((day, index) => (
               <div key={index} className="h-3 flex items-center justify-end pr-1">
                 {index % 2 === 0 ? day : ''}
@@ -237,7 +245,7 @@ const ContributionGraph = () => {
         </div>
 
         {/* Legend */}
-        <div className="flex items-center justify-between mt-4 text-xs text-gray-600 dark:text-gray-400">
+        <div className="flex items-center justify-between mt-4 text-xs" style={{ color: 'var(--text-secondary)' }}>
           <span>Ít hơn</span>
           <div className="flex space-x-1">
             <div className="contribution-square intensity-0"></div>
@@ -269,29 +277,29 @@ const ContributionGraph = () => {
       {/* Summary Stats */}
       {summaryData && (
         <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="text-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-            <div className="text-lg font-bold text-blue-600 dark:text-blue-400">
+          <div className="text-center p-3 rounded-lg" style={{ backgroundColor: 'var(--bg-secondary)' }}>
+            <div className="text-lg font-bold" style={{ color: 'var(--text-primary)' }}>
               {summaryData.overview.totalSubmissions}
             </div>
-            <div className="text-sm text-gray-600 dark:text-gray-300">Tổng bài làm</div>
+            <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>Tổng bài làm</div>
           </div>
-          <div className="text-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-            <div className="text-lg font-bold text-green-600 dark:text-green-400">
+          <div className="text-center p-3 rounded-lg" style={{ backgroundColor: 'var(--bg-secondary)' }}>
+            <div className="text-lg font-bold" style={{ color: 'var(--text-primary)' }}>
               {summaryData.overview.averageScore?.toFixed(1) || 'N/A'}
             </div>
-            <div className="text-sm text-gray-600 dark:text-gray-300">Điểm TB</div>
+            <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>Điểm TB</div>
           </div>
-          <div className="text-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-            <div className="text-lg font-bold text-purple-600 dark:text-purple-400">
+          <div className="text-center p-3 rounded-lg" style={{ backgroundColor: 'var(--bg-secondary)' }}>
+            <div className="text-lg font-bold" style={{ color: 'var(--text-primary)' }}>
               {summaryData.overview.totalTimeHours?.toFixed(1) || 'N/A'}h
             </div>
-            <div className="text-sm text-gray-600 dark:text-gray-300">Tổng thời gian</div>
+            <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>Tổng thời gian</div>
           </div>
-          <div className="text-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-            <div className="text-lg font-bold text-orange-600 dark:text-orange-400">
+          <div className="text-center p-3 rounded-lg" style={{ backgroundColor: 'var(--bg-secondary)' }}>
+            <div className="text-lg font-bold" style={{ color: 'var(--text-primary)' }}>
               {summaryData.overview.completionRate?.toFixed(1) || 'N/A'}%
             </div>
-            <div className="text-sm text-gray-600 dark:text-gray-300">Tỷ lệ hoàn thành</div>
+            <div className="text-sm" style={{ color: 'var(--text-secondary)' }}>Tỷ lệ hoàn thành</div>
           </div>
         </div>
       )}

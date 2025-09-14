@@ -17,6 +17,13 @@ const VocabularyList = () => {
     loadData();
   }, []);
 
+  // Reload data when switching to history or stats tabs
+  useEffect(() => {
+    if (activeTab === 'history' || activeTab === 'stats') {
+      reloadData();
+    }
+  }, [activeTab]);
+
   const loadData = async () => {
     setLoading(true);
     setError(null);
@@ -39,7 +46,24 @@ const VocabularyList = () => {
     }
   };
 
-  const handleMarkLearned = (wordIndex) => {
+  const reloadData = async () => {
+    try {
+      const [todayData, historyData, statsData] = await Promise.all([
+        api.getTodayVocabulary(),
+        api.getVocabularyHistory({ page: 1, limit: 7 }),
+        api.getVocabularyStatistics()
+      ]);
+      
+      setTodayVocabulary(todayData);
+      setHistory(historyData);
+      setStatistics(statsData);
+    } catch (err) {
+      console.error('Error reloading data:', err);
+      setError(err.message);
+    }
+  };
+
+  const handleMarkLearned = async (wordIndex) => {
     if (todayVocabulary?.metadata?.vocabularyWords) {
       const updatedWords = [...todayVocabulary.metadata.vocabularyWords];
       updatedWords[wordIndex] = {
@@ -59,6 +83,9 @@ const VocabularyList = () => {
           isCompleted: updatedWords.every(w => w.isLearned)
         }
       });
+
+      // Reload history and statistics after marking word as learned
+      await reloadData();
     }
   };
 
@@ -104,21 +131,26 @@ const VocabularyList = () => {
   const totalWords = todayVocabulary?.metadata?.totalWords || 0;
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-8">
+    <div className="min-h-screen py-8" style={{ backgroundColor: 'var(--bg-primary)' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-8">
           <div className="flex justify-between items-start">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+              <h1 className="text-3xl font-bold mb-2" style={{ color: 'var(--text-primary)' }}>
                 Từ vựng hôm nay
               </h1>
-              <p className="text-gray-600 dark:text-gray-400">
+              <p style={{ color: 'var(--text-secondary)' }}>
                 Học từ vựng mới mỗi ngày để cải thiện tiếng Anh
               </p>
             </div>
             <button
               onClick={() => setShowPreferences(true)}
-              className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors"
+              className="px-4 py-2 text-sm font-medium rounded-lg transition-colors"
+              style={{ 
+                color: 'var(--text-primary)', 
+                backgroundColor: 'var(--bg-secondary)',
+                border: '1px solid var(--border-color)'
+              }}
             >
               ⚙️ Cài đặt
             </button>
@@ -127,22 +159,22 @@ const VocabularyList = () => {
 
         {/* Progress Bar */}
         {todayVocabulary && (
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6">
+          <div className="rounded-lg shadow-md p-6 mb-6" style={{ backgroundColor: 'var(--card-bg)' }}>
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+              <h2 className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>
                 Tiến độ hôm nay
               </h2>
-              <span className="text-sm text-gray-600 dark:text-gray-400">
+              <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>
                 {completedWords}/{totalWords} từ
               </span>
             </div>
-            <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
+            <div className="w-full rounded-full h-3" style={{ backgroundColor: 'var(--bg-secondary)' }}>
               <div 
                 className="bg-blue-600 h-3 rounded-full transition-all duration-500"
                 style={{ width: `${progress}%` }}
               />
             </div>
-            <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400 mt-2">
+            <div className="flex justify-between text-sm mt-2" style={{ color: 'var(--text-secondary)' }}>
               <span>0%</span>
               <span className="font-medium">{Math.round(progress)}%</span>
               <span>100%</span>
@@ -213,10 +245,10 @@ const VocabularyList = () => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                   </svg>
                 </div>
-                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                <h3 className="text-lg font-medium mb-2" style={{ color: 'var(--text-primary)' }}>
                   Chưa có từ vựng hôm nay
                 </h3>
-                <p className="text-gray-600 dark:text-gray-400">
+                <p style={{ color: 'var(--text-secondary)' }}>
                   Hệ thống sẽ tự động tạo từ vựng mới cho bạn.
                 </p>
               </div>
@@ -245,19 +277,19 @@ const VocabularyList = () => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
-                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                <h3 className="text-lg font-medium mb-2" style={{ color: 'var(--text-primary)' }}>
                   Chưa có lịch sử học
                 </h3>
-                <p className="text-gray-600 dark:text-gray-400">
+                <p style={{ color: 'var(--text-secondary)' }}>
                   Bắt đầu học từ vựng để xem lịch sử của bạn.
                 </p>
               </div>
             ) : (
               <div className="space-y-4">
                 {history.map((day) => (
-                  <div key={day._id} className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+                  <div key={day._id} className="rounded-lg shadow-md p-6" style={{ backgroundColor: 'var(--card-bg)' }}>
                     <div className="flex justify-between items-center mb-4">
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                      <h3 className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>
                         {new Date(day.date).toLocaleDateString('vi-VN', {
                           weekday: 'long',
                           year: 'numeric',
@@ -266,7 +298,7 @@ const VocabularyList = () => {
                         })}
                       </h3>
                       <div className="flex items-center gap-4">
-                        <span className="text-sm text-gray-600 dark:text-gray-400">
+                        <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>
                           {day.completedWords}/{day.totalWords} từ
                         </span>
                         <span className={`px-3 py-1 rounded-full text-sm font-medium ${
@@ -278,7 +310,7 @@ const VocabularyList = () => {
                         </span>
                       </div>
                     </div>
-                    <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                    <div className="w-full style={{ backgroundColor: 'var(--bg-secondary)' }} rounded-full h-2">
                       <div 
                         className={`h-2 rounded-full transition-all duration-300 ${
                           day.progressPercentage >= 80 ? 'bg-green-500' :
@@ -287,7 +319,7 @@ const VocabularyList = () => {
                         style={{ width: `${day.progressPercentage}%` }}
                       />
                     </div>
-                    <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400 mt-2">
+                    <div className="flex justify-between text-sm mt-2" style={{ color: 'var(--text-secondary)' }}>
                       <span>0%</span>
                       <span className="font-medium">{day.progressPercentage}%</span>
                       <span>100%</span>

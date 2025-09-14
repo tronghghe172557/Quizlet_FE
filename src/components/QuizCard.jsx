@@ -16,13 +16,14 @@ export default function QuizCard({ quiz, onShare }) {
   };
 
   return (
-    <div className="group relative">
-      <Link to={`/quizzes/${quiz._id}`} className="block">
+    <div className="group relative h-full quiz-card-container">
+      <Link to={`/quizzes/${quiz._id}`} className="block h-full">
         <div 
-          className="rounded-2xl shadow-lg border p-6 h-full transition-all hover:shadow-xl hover:scale-105"
+          className="rounded-2xl shadow-lg border p-6 h-full flex flex-col transition-all hover:shadow-xl hover:scale-105 quiz-card-content"
           style={{ 
             backgroundColor: 'var(--card-bg)', 
-            borderColor: 'var(--border-color)' 
+            borderColor: 'var(--border-color)',
+            minHeight: '280px'
           }}
         >
           <div className="flex items-start justify-between mb-4">
@@ -43,12 +44,12 @@ export default function QuizCard({ quiz, onShare }) {
             </span>
           </div>
           <p 
-            className="text-sm line-clamp-3 leading-relaxed"
+            className="text-sm line-clamp-3 leading-relaxed quiz-card-description"
             style={{ color: 'var(--text-secondary)' }}
           >
             {subtitle}
           </p>
-          <div className="mt-4 text-xs" style={{ color: 'var(--text-secondary)' }}>
+          <div className="quiz-card-footer pt-4 text-xs" style={{ color: 'var(--text-secondary)' }}>
             Tạo bởi: {typeof quiz?.createdBy === 'object' ? quiz?.createdBy?.email || quiz?.createdBy?.name || "Unknown" : quiz?.createdBy || "Unknown"}
           </div>
         </div>
