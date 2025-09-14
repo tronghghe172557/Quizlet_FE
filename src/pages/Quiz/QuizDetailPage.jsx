@@ -1,11 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { api, utils } from "../../utils/api";
+import { useAuth } from "../../contexts/AuthContext";
 import FlashcardView from "../../components/FlashcardView";
 import TestView from "../../components/TestView";
+import QuizSharingModal from "../../components/QuizSharingModal";
 
 export default function QuizDetailPage() {
   const { id } = useParams();
+  const { user } = useAuth();
   const [quiz, setQuiz] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -15,6 +18,12 @@ export default function QuizDetailPage() {
   const [current, setCurrent] = useState(0);
   const [selected, setSelected] = useState({}); // questionIndex -> choiceIndex
   const [showAnswer, setShowAnswer] = useState(false);
+
+  // Quiz sharing state
+  const [showSharingModal, setShowSharingModal] = useState(false);
+
+  // Check if user is admin
+  const isAdmin = user?.role === 'admin';
 
   useEffect(() => {
     let isMounted = true;
@@ -112,6 +121,17 @@ export default function QuizDetailPage() {
             >
               Thống kê
             </Link>
+            {isAdmin && (
+              <button
+                onClick={() => setShowSharingModal(true)}
+                className="px-6 py-3 rounded-lg bg-blue-500 hover:bg-blue-600 text-white font-medium transition-colors flex items-center gap-2"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z" />
+                </svg>
+                Chia sẻ
+              </button>
+            )}
             <Link 
               to="/quizzes" 
               className="px-4 py-2 rounded-lg border transition-colors"
@@ -185,6 +205,19 @@ export default function QuizDetailPage() {
             />
           )}
         </div>
+
+        {/* Quiz Sharing Modal */}
+        {quiz && (
+          <QuizSharingModal
+            quiz={quiz}
+            isOpen={showSharingModal}
+            onClose={() => setShowSharingModal(false)}
+            onUpdate={() => {
+              // Refresh quiz data if needed
+              // Could add a refresh function here
+            }}
+          />
+        )}
       </div>
     </div>
   );

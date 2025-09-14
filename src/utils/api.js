@@ -412,6 +412,71 @@ export const api = {
     if (!res.ok) throw new Error("Không tải được contribution summary");
     return await res.json();
   },
+
+  // Quiz Sharing APIs
+  async getUsers({ search = '', page = 1, limit = 20 } = {}) {
+    const params = new URLSearchParams();
+    if (search) params.append('search', search);
+    params.append('page', page.toString());
+    params.append('limit', limit.toString());
+
+    const res = await makeAuthenticatedRequest(
+      `${API_BASE_URL}/api/auth/users?${params}`
+    );
+    if (!res.ok) throw new Error("Không tải được danh sách users");
+    return await res.json();
+  },
+
+  async shareQuiz(quizId, { userIds }) {
+    const res = await makeAuthenticatedRequest(
+      `${QUIZ_API_URL}/${quizId}/share`,
+      {
+        method: "POST",
+        body: JSON.stringify({ userIds }),
+      }
+    );
+    if (!res.ok) {
+      const data = await res.json();
+      throw new Error(data?.message || "Chia sẻ quiz thất bại");
+    }
+    return await res.json();
+  },
+
+  async unshareQuiz(quizId, { userIds }) {
+    const res = await makeAuthenticatedRequest(
+      `${QUIZ_API_URL}/${quizId}/share`,
+      {
+        method: "DELETE",
+        body: JSON.stringify({ userIds }),
+      }
+    );
+    if (!res.ok) {
+      const data = await res.json();
+      throw new Error(data?.message || "Hủy chia sẻ quiz thất bại");
+    }
+    return await res.json();
+  },
+
+  async getSharedUsers(quizId) {
+    const res = await makeAuthenticatedRequest(
+      `${QUIZ_API_URL}/${quizId}/shared-users`
+    );
+    if (!res.ok) throw new Error("Không tải được danh sách users được chia sẻ");
+    return await res.json();
+  },
+
+  async getMyQuizzes({ type = 'all', page = 1, limit = 10 } = {}) {
+    const params = new URLSearchParams();
+    params.append('type', type);
+    params.append('page', page.toString());
+    params.append('limit', limit.toString());
+
+    const res = await makeAuthenticatedRequest(
+      `${QUIZ_API_URL}/my/quizzes?${params}`
+    );
+    if (!res.ok) throw new Error("Không tải được danh sách quiz của tôi");
+    return await res.json();
+  },
 };
 
 // Utility Functions

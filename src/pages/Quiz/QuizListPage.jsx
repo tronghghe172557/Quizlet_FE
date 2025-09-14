@@ -1,13 +1,18 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../../utils/api";
+import { useAuth } from "../../contexts/AuthContext";
 import QuizCard from "../../components/QuizCard";
+import QuizSharingModal from "../../components/QuizSharingModal";
 
 export default function QuizListPage() {
+  const { user } = useAuth();
   const [quizzes, setQuizzes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [titleFilter, setTitleFilter] = useState("");
+  const [selectedQuiz, setSelectedQuiz] = useState(null);
+  const [showSharingModal, setShowSharingModal] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -33,6 +38,16 @@ export default function QuizListPage() {
     const title = (q.title || q.model || "").toLowerCase();
     return title.includes(titleFilter.trim().toLowerCase());
   });
+
+  const handleShareQuiz = (quiz) => {
+    setSelectedQuiz(quiz);
+    setShowSharingModal(true);
+  };
+
+  const handleCloseSharingModal = () => {
+    setShowSharingModal(false);
+    setSelectedQuiz(null);
+  };
 
   if (loading) {
     return (
@@ -93,9 +108,21 @@ export default function QuizListPage() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filtered.map((q) => (
-              <QuizCard key={q._id} quiz={q} />
+              <QuizCard key={q._id} quiz={q} onShare={handleShareQuiz} />
             ))}
           </div>
+        )}
+
+        {/* Quiz Sharing Modal */}
+        {selectedQuiz && (
+          <QuizSharingModal
+            quiz={selectedQuiz}
+            isOpen={showSharingModal}
+            onClose={handleCloseSharingModal}
+            onUpdate={() => {
+              // Could refresh quiz list if needed
+            }}
+          />
         )}
       </div>
     </div>
