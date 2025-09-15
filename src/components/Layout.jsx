@@ -1,5 +1,6 @@
 import Header from "./Header";
 import ReviewNotification from "./ReviewNotification";
+import ScrollToTop from "./ScrollToTop";
 
 export default function Layout({ children }) {
   return (
@@ -9,6 +10,7 @@ export default function Layout({ children }) {
         {children}
       </main>
       <ReviewNotification />
+      <ScrollToTop />
     </div>
   );
 }

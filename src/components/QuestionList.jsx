@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { api } from '../utils/api';
 import QuestionEditor from './QuestionEditor';
 
@@ -6,6 +6,8 @@ const QuestionList = ({ questions, quizId, onQuestionsUpdate }) => {
   const [editingQuestion, setEditingQuestion] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [activeQuestion, setActiveQuestion] = useState(0);
+  const questionRefs = useRef([]);
 
   const handleEditQuestion = (questionIndex) => {
     setEditingQuestion(questionIndex);
@@ -38,6 +40,40 @@ const QuestionList = ({ questions, quizId, onQuestionsUpdate }) => {
     setEditingQuestion(null);
   };
 
+  const scrollToQuestion = (questionIndex) => {
+    if (questionRefs.current[questionIndex]) {
+      questionRefs.current[questionIndex].scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+      setActiveQuestion(questionIndex);
+    }
+  };
+
+  // Intersection Observer để theo dõi câu hỏi đang hiển thị
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const questionIndex = parseInt(entry.target.dataset.questionIndex);
+            setActiveQuestion(questionIndex);
+          }
+        });
+      },
+      {
+        threshold: 0.5,
+        rootMargin: '-100px 0px -100px 0px'
+      }
+    );
+
+    questionRefs.current.forEach((ref) => {
+      if (ref) observer.observe(ref);
+    });
+
+    return () => observer.disconnect();
+  }, [questions]);
+
   if (questions.length === 0) {
     return (
       <div className="text-center py-8">
@@ -57,24 +93,64 @@ const QuestionList = ({ questions, quizId, onQuestionsUpdate }) => {
   }
 
   return (
-    <div className="space-y-4">
-      {error && (
-        <div className="p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
-          <div className="flex">
-            <div className="flex-shrink-0">
-              <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-              </svg>
-            </div>
-            <div className="ml-3">
-              <p className="text-sm">{error}</p>
+    <div className="flex gap-6">
+      {/* Sidebar với danh sách câu hỏi */}
+      <div className="w-64 flex-shrink-0">
+        <div className="sticky top-4">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 p-4">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+              Danh sách câu hỏi ({questions.length})
+            </h3>
+            <div className="space-y-2 max-h-96 overflow-y-auto">
+              {questions.map((question, index) => (
+                <button
+                  key={index}
+                  onClick={() => scrollToQuestion(index)}
+                  className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                    activeQuestion === index
+                      ? 'bg-blue-500 text-white shadow-sm'
+                      : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <span>Câu {index + 1}</span>
+                    {activeQuestion === index && (
+                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                    )}
+                  </div>
+                </button>
+              ))}
             </div>
           </div>
         </div>
-      )}
+      </div>
 
-      {questions.map((question, index) => (
-        <div key={index} className="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700">
+      {/* Nội dung chính */}
+      <div className="flex-1 space-y-4">
+        {error && (
+          <div className="p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+            <div className="flex">
+              <div className="flex-shrink-0">
+                <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <div className="ml-3">
+                <p className="text-sm">{error}</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {questions.map((question, index) => (
+        <div 
+          key={index} 
+          ref={(el) => (questionRefs.current[index] = el)}
+          data-question-index={index}
+          className="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700"
+        >
           <div className="p-6">
             {/* Question Header */}
             <div className="flex justify-between items-start mb-4">
@@ -166,18 +242,19 @@ const QuestionList = ({ questions, quizId, onQuestionsUpdate }) => {
             )}
           </div>
         </div>
-      ))}
+        ))}
 
-      {/* Question Editor Modal */}
-      {editingQuestion !== null && (
-        <QuestionEditor
-          question={questions[editingQuestion]}
-          questionIndex={editingQuestion}
-          quizId={quizId}
-          onSave={handleSaveQuestion}
-          onCancel={handleCancelEdit}
-        />
-      )}
+        {/* Question Editor Modal */}
+        {editingQuestion !== null && (
+          <QuestionEditor
+            question={questions[editingQuestion]}
+            questionIndex={editingQuestion}
+            quizId={quizId}
+            onSave={handleSaveQuestion}
+            onCancel={handleCancelEdit}
+          />
+        )}
+      </div>
     </div>
   );
 };
