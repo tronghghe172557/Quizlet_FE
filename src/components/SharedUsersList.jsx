@@ -29,7 +29,11 @@ const SharedUsersList = ({ quizId, onUpdate }) => {
     try {
       setRemovingUsers(prev => new Set(prev).add(userId));
       
-      await api.unshareQuiz(quizId, { userIds: [userId] });
+      // Find user email by userId
+      const user = sharedUsers.find(u => u._id === userId);
+      if (!user) return;
+      
+      await api.unshareQuiz(quizId, { userEmails: [user.email] });
       
       // Remove user from local state
       setSharedUsers(prev => prev.filter(user => user._id !== userId));
@@ -58,7 +62,12 @@ const SharedUsersList = ({ quizId, onUpdate }) => {
       // Add all users to removing state
       setRemovingUsers(prev => new Set([...prev, ...userIds]));
       
-      await api.unshareQuiz(quizId, { userIds });
+      // Find user emails by userIds
+      const userEmails = sharedUsers
+        .filter(user => userIds.includes(user._id))
+        .map(user => user.email);
+      
+      await api.unshareQuiz(quizId, { userEmails });
       
       // Remove users from local state
       setSharedUsers(prev => prev.filter(user => !userIds.includes(user._id)));

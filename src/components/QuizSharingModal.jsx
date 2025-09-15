@@ -39,8 +39,8 @@ const QuizSharingModal = ({ quiz, isOpen, onClose, onUpdate }) => {
       setError(null);
       setSuccess(null);
 
-      const userIds = selectedUsers.map(user => user._id);
-      await api.shareQuiz(quiz._id, { userIds });
+      const userEmails = selectedUsers.map(user => user.email);
+      await api.shareQuiz(quiz._id, { userEmails });
 
       setSuccess(`Đã chia sẻ quiz với ${selectedUsers.length} user(s) thành công!`);
       setSelectedUsers([]);

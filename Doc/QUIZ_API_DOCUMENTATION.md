@@ -507,7 +507,7 @@ curl -X GET "http://localhost:3001/api/auth/users?search=john&page=1&limit=10" \
 - **Admin**: Có thể chia sẻ bất kỳ quiz nào với tất cả users
 - **User**: Chỉ có thể chia sẻ quiz của mình, không thể chọn admin làm người nhận
 
-Thêm users vào danh sách được chia sẻ quiz bằng email.
+Thêm users vào danh sách được chia sẻ quiz bằng user ID.
 
 ### URL Parameters:
 - `quizId` (string): ID của quiz cần chia sẻ
@@ -515,7 +515,7 @@ Thêm users vào danh sách được chia sẻ quiz bằng email.
 ### Request Body:
 ```json
 {
-  "userEmails": ["user1@example.com", "user2@example.com", "student@example.com"]
+  "userIds": ["60d5ecb74b24a10004f1c8e1", "60d5ecb74b24a10004f1c8e2", "60d5ecb74b24a10004f1c8e3"]
 }
 ```
 
@@ -525,7 +525,10 @@ curl -X POST "http://localhost:3001/api/quizzes/60d5ecb74b24a10004f1c8d1/share" 
   -H "Authorization: Bearer <access_token>" \
   -H "Content-Type: application/json" \
   -d '{
-    "userEmails": ["user1@example.com", "user2@example.com"]
+    "userIds": [
+      "60d5ecb74b24a10004f1c8e1",
+      "60d5ecb74b24a10004f1c8e2"
+    ]
   }'
 ```
 
@@ -551,13 +554,13 @@ curl -X POST "http://localhost:3001/api/quizzes/60d5ecb74b24a10004f1c8d1/share" 
 ### Lỗi phổ biến:
 - **403**: Bạn không có quyền chia sẻ quiz này
 - **404**: Quiz không tồn tại  
-- **400**: Không tìm thấy user hợp lệ với email đã cung cấp
+- **400**: Không tìm thấy user hợp lệ với ID đã cung cấp
 - **403**: User không thể chia sẻ quiz với admin
-- **400**: Email không hợp lệ
+- **400**: User ID không hợp lệ
 
 ### 💡 Logic hoạt động:
 1. Validate quyền (owner hoặc admin)
-2. Tìm users theo email 
+2. Tìm users theo ID 
 3. Kiểm tra user không thể share với admin
 4. Thêm vào sharedWith array (không trùng lặp)
 
@@ -571,7 +574,7 @@ curl -X POST "http://localhost:3001/api/quizzes/60d5ecb74b24a10004f1c8d1/share" 
 - **Admin**: Có thể hủy chia sẻ bất kỳ quiz nào
 - **User**: Chỉ có thể hủy chia sẻ quiz của mình
 
-Loại bỏ users khỏi danh sách được chia sẻ quiz bằng email.
+Loại bỏ users khỏi danh sách được chia sẻ quiz bằng user ID.
 
 ### URL Parameters:
 - `quizId` (string): ID của quiz cần hủy chia sẻ
@@ -579,7 +582,7 @@ Loại bỏ users khỏi danh sách được chia sẻ quiz bằng email.
 ### Request Body:
 ```json
 {
-  "userEmails": ["user1@example.com", "user3@example.com"]
+  "userIds": ["60d5ecb74b24a10004f1c8e1", "60d5ecb74b24a10004f1c8e3"]
 }
 ```
 
@@ -603,7 +606,7 @@ Loại bỏ users khỏi danh sách được chia sẻ quiz bằng email.
 
 ### 💡 Logic hoạt động:
 1. Validate quyền (owner hoặc admin)
-2. Tìm users theo email
+2. Tìm users theo ID
 3. Remove khỏi sharedWith array
 4. Trả về số lượng đã hủy
 
@@ -869,28 +872,28 @@ const getUsers = async (search = '', page = 1) => {
 };
 
 // Chia sẻ quiz với users (Admin và User)
-const shareQuiz = async (quizId, userEmails) => {
+const shareQuiz = async (quizId, userIds) => {
   const response = await fetch(`/api/quizzes/${quizId}/share`, {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${accessToken}`,
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({ userEmails })
+    body: JSON.stringify({ userIds })
   });
 
   return response.json();
 };
 
 // Hủy chia sẻ quiz
-const unshareQuiz = async (quizId, userEmails) => {
+const unshareQuiz = async (quizId, userIds) => {
   const response = await fetch(`/api/quizzes/${quizId}/share`, {
     method: 'DELETE',
     headers: {
       'Authorization': `Bearer ${accessToken}`,
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({ userEmails })
+    body: JSON.stringify({ userIds })
   });
 
   return response.json();
@@ -900,14 +903,14 @@ const unshareQuiz = async (quizId, userEmails) => {
 try {
   // Admin: Lấy danh sách users
   const users = await getUsers('john', 1);
-  const userEmails = users.data.users.map(user => user.email);
+  const userIds = users.data.users.map(user => user._id);
   
   // Chia sẻ quiz với users
-  const shareResult = await shareQuiz('67643aa4e123456789abcdef', userEmails);
+  const shareResult = await shareQuiz('67643aa4e123456789abcdef', userIds);
   console.log('Shared with:', shareResult.data.sharedWithCount, 'users');
   
   // Hủy chia sẻ với một số users
-  const unshareResult = await unshareQuiz('67643aa4e123456789abcdef', ['user1@example.com']);
+  const unshareResult = await unshareQuiz('67643aa4e123456789abcdef', ['60d5ecb74b24a10004f1c8e1']);
   console.log('Unshared from:', unshareResult.message);
 } catch (error) {
   console.error('Sharing failed:', error.message);
@@ -1013,14 +1016,6 @@ export const validateQuizAccess = (quiz, req) => {
 // controllers/quizzes.controller.js
 export const shareQuiz = async (req, res, next) => {
   try {
-    // Chỉ admin mới được chia sẻ
-    if (req.user.role !== 'admin') {
-      return res.status(403).json({
-        status: 'error',
-        message: 'Chỉ admin mới có quyền chia sẻ quiz'
-      });
-    }
-
     const { userIds } = req.body;
     const quiz = req.resource;
     
@@ -1097,7 +1092,7 @@ const UpdateQuestionSchema = z.object({
 });
 
 const ShareQuizSchema = z.object({
-  userEmails: z.array(z.string().email('Email không hợp lệ')).min(1, 'Phải có ít nhất 1 email')
+  userIds: z.array(z.string().min(1, 'User ID không hợp lệ')).min(1, 'Phải có ít nhất 1 user ID')
 });
 ```
 ```
@@ -1119,7 +1114,7 @@ const shareResult = await fetch('/api/quizzes/123/share', {
     'Content-Type': 'application/json' 
   },
   body: JSON.stringify({
-    userEmails: ['user1@example.com', 'user2@example.com']
+    userIds: ['60d5ecb74b24a10004f1c8e1', '60d5ecb74b24a10004f1c8e2']
   })
 });
 
@@ -1136,7 +1131,7 @@ const unshareResult = await fetch('/api/quizzes/123/share', {
     'Content-Type': 'application/json' 
   },
   body: JSON.stringify({
-    userEmails: ['user1@example.com']
+    userIds: ['60d5ecb74b24a10004f1c8e1']
   })
 });
 
@@ -1240,14 +1235,14 @@ SKILL=A2-B1
 - User chỉ có thể chia sẻ quiz của mình (createdBy)
 - Kiểm tra ownership trước khi chia sẻ
 
-### 8. **400 Invalid Email Format:**
+### 8. **400 Invalid User ID Format:**
 ```json
 {
   "status": "error",
-  "message": "Email không hợp lệ"
+  "message": "User ID không hợp lệ"
 }
 ```
-**Solution**: Đảm bảo format email đúng trong userEmails array.
+**Solution**: Đảm bảo format user ID đúng trong userIds array.
 
 ### 9. **403 Cannot Share With Admin:**
 ```json
@@ -1276,10 +1271,10 @@ SKILL=A2-B1
 ```json
 {
   "status": "error",
-  "message": "Không tìm thấy user hợp lệ nào với email đã cung cấp"
+  "message": "Không tìm thấy user hợp lệ nào với ID đã cung cấp"
 }
 ```
-**Solution**: Kiểm tra email users có tồn tại và active trong hệ thống.
+**Solution**: Kiểm tra user IDs có tồn tại và active trong hệ thống.
 
 ## Debug Tips:
 1. Check JWT token expiration

@@ -447,12 +447,12 @@ export const api = {
     return await res.json();
   },
 
-  async shareQuiz(quizId, { userIds }) {
+  async shareQuiz(quizId, { userEmails }) {
     const res = await makeAuthenticatedRequest(
       `${QUIZ_API_URL}/${quizId}/share`,
       {
         method: "POST",
-        body: JSON.stringify({ userIds }),
+        body: JSON.stringify({ userEmails }),
       }
     );
     if (!res.ok) {
@@ -462,12 +462,12 @@ export const api = {
     return await res.json();
   },
 
-  async unshareQuiz(quizId, { userIds }) {
+  async unshareQuiz(quizId, { userEmails }) {
     const res = await makeAuthenticatedRequest(
       `${QUIZ_API_URL}/${quizId}/share`,
       {
         method: "DELETE",
-        body: JSON.stringify({ userIds }),
+        body: JSON.stringify({ userEmails }),
       }
     );
     if (!res.ok) {
