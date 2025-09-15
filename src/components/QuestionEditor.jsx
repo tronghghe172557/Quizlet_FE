@@ -103,7 +103,7 @@ const QuestionEditor = ({ question, questionIndex, quizId, onSave, onCancel }) =
           </div>
 
           {error && (
-            <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+            <div className="mb-4 p-3 bg-red-100 dark:bg-red-900/20 border border-red-400 dark:border-red-800 text-red-700 dark:text-red-300 rounded">
               {error}
             </div>
           )}
@@ -137,7 +137,7 @@ const QuestionEditor = ({ question, questionIndex, quizId, onSave, onCancel }) =
                       name="correctAnswer"
                       checked={choice.isCorrect}
                       onChange={() => handleCorrectAnswerChange(index)}
-                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 dark:border-gray-600 dark:bg-gray-700"
                     />
                     <input
                       type="text"

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import { useParams, Link } from "react-router-dom";
 import { api, utils } from "../../utils/api";
 import { useAuth } from "../../contexts/AuthContext";
@@ -26,7 +26,7 @@ export default function QuizDetailPage() {
   // Check if user is admin
   const isAdmin = user?.role === 'admin';
 
-  const loadQuiz = async () => {
+  const loadQuiz = useCallback(async () => {
     setLoading(true);
     setError("");
     try {
@@ -37,18 +37,11 @@ export default function QuizDetailPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
 
   useEffect(() => {
-    let isMounted = true;
-    async function load() {
-      await loadQuiz();
-    }
-    load();
-    return () => {
-      isMounted = false;
-    };
-  }, [id]);
+    loadQuiz();
+  }, [loadQuiz]);
 
   const questions = useMemo(() => quiz?.questions || [], [quiz]);
 
@@ -113,12 +106,12 @@ export default function QuizDetailPage() {
               <div>{total} câu hỏi • Tạo bởi {typeof quiz?.createdBy === 'object' ? quiz?.createdBy?.email || quiz?.createdBy?.name || "Unknown" : quiz?.createdBy || "Unknown"}</div>
               <div className="flex items-center gap-4 text-xs">
                 {quiz?.englishLevel && (
-                  <span className="px-2 py-1 rounded-full" style={{ backgroundColor: 'var(--bg-secondary)' }}>
+                  <span className="px-2 py-1 rounded-full" style={{ backgroundColor: 'var(--bg-secondary)', color: 'var(--text-primary)' }}>
                     Trình độ: {quiz.englishLevel}
                   </span>
                 )}
                 {quiz?.questionType && (
-                  <span className="px-2 py-1 rounded-full" style={{ backgroundColor: 'var(--bg-secondary)' }}>
+                  <span className="px-2 py-1 rounded-full" style={{ backgroundColor: 'var(--bg-secondary)', color: 'var(--text-primary)' }}>
                     Loại: {quiz.questionType === 'mixed' ? 'Hỗn hợp' : 
                       quiz.questionType === 'vocabulary' ? 'Từ vựng' :
                       quiz.questionType === 'grammar' ? 'Ngữ pháp' :
@@ -127,12 +120,12 @@ export default function QuizDetailPage() {
                   </span>
                 )}
                 {quiz?.model && (
-                  <span className="px-2 py-1 rounded-full" style={{ backgroundColor: 'var(--bg-secondary)' }}>
+                  <span className="px-2 py-1 rounded-full" style={{ backgroundColor: 'var(--bg-secondary)', color: 'var(--text-primary)' }}>
                     Model: {quiz.model}
                   </span>
                 )}
                 {quiz?.displayLanguage && (
-                  <span className="px-2 py-1 rounded-full" style={{ backgroundColor: 'var(--bg-secondary)' }}>
+                  <span className="px-2 py-1 rounded-full" style={{ backgroundColor: 'var(--bg-secondary)', color: 'var(--text-primary)' }}>
                     Ngôn ngữ: {quiz.displayLanguage === 'vietnamese' ? 'Tiếng Việt' : 
                       quiz.displayLanguage === 'english' ? 'English' : 'Hỗn hợp'}
                   </span>
@@ -169,8 +162,8 @@ export default function QuizDetailPage() {
               className="px-4 py-2 rounded-lg border transition-colors"
               style={{ 
                 borderColor: 'var(--border-color)', 
-                color: 'var(--text-secondary)',
-                backgroundColor: 'var(--card-bg)'
+                color: 'var(--text-primary)', 
+                backgroundColor: 'var(--card-bg)' 
               }}
             >
               ← Quay lại
@@ -180,13 +173,7 @@ export default function QuizDetailPage() {
 
         {/* Mode Toggle */}
         <div className="mb-8 flex justify-center">
-          <div 
-            className="inline-flex rounded-xl border p-1"
-            style={{ 
-              borderColor: 'var(--border-color)', 
-              backgroundColor: 'var(--card-bg)' 
-            }}
-          >
+          <div className="inline-flex rounded-xl border p-1" style={{ borderColor: 'var(--border-color)', backgroundColor: 'var(--card-bg)' }}>
             <button
               onClick={() => setMode("flashcard")}
               className={`px-6 py-3 rounded-lg text-sm font-medium transition-all ${
@@ -194,9 +181,7 @@ export default function QuizDetailPage() {
                   ? "bg-blue-500 text-white shadow-sm" 
                   : ""
               }`}
-              style={{ 
-                color: mode === "flashcard" ? "white" : "var(--text-secondary)" 
-              }}
+              style={mode !== "flashcard" ? { color: 'var(--text-secondary)' } : {}}
             >
               Flashcards
             </button>
@@ -207,9 +192,7 @@ export default function QuizDetailPage() {
                   ? "bg-blue-500 text-white shadow-sm" 
                   : ""
               }`}
-              style={{ 
-                color: mode === "test" ? "white" : "var(--text-secondary)" 
-              }}
+              style={mode !== "test" ? { color: 'var(--text-secondary)' } : {}}
             >
               Kiểm tra
             </button>
@@ -221,9 +204,7 @@ export default function QuizDetailPage() {
                     ? "bg-blue-500 text-white shadow-sm" 
                     : ""
                 }`}
-                style={{ 
-                  color: mode === "manage" ? "white" : "var(--text-secondary)" 
-                }}
+                style={mode !== "manage" ? { color: 'var(--text-secondary)' } : {}}
               >
                 Quản lý câu hỏi
               </button>

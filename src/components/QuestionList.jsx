@@ -77,15 +77,15 @@ const QuestionList = ({ questions, quizId, onQuestionsUpdate }) => {
   if (questions.length === 0) {
     return (
       <div className="text-center py-8">
-        <div className="text-gray-400 dark:text-gray-500 mb-4">
+        <div className="mb-4" style={{ color: 'var(--text-secondary)' }}>
           <svg className="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
         </div>
-        <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+        <h3 className="text-lg font-medium mb-2" style={{ color: 'var(--text-primary)' }}>
           Chưa có câu hỏi nào
         </h3>
-        <p className="text-gray-600 dark:text-gray-400">
+        <p style={{ color: 'var(--text-secondary)' }}>
           Quiz này chưa có câu hỏi nào được tạo.
         </p>
       </div>
@@ -97,8 +97,8 @@ const QuestionList = ({ questions, quizId, onQuestionsUpdate }) => {
       {/* Sidebar với danh sách câu hỏi */}
       <div className="w-64 flex-shrink-0">
         <div className="sticky top-4">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700 p-4">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+          <div className="rounded-lg shadow-md border p-4" style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--border-color)' }}>
+            <h3 className="text-lg font-semibold mb-4" style={{ color: 'var(--text-primary)' }}>
               Danh sách câu hỏi ({questions.length})
             </h3>
             <div className="space-y-2 max-h-96 overflow-y-auto">
@@ -109,8 +109,12 @@ const QuestionList = ({ questions, quizId, onQuestionsUpdate }) => {
                   className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-all ${
                     activeQuestion === index
                       ? 'bg-blue-500 text-white shadow-sm'
-                      : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                      : ''
                   }`}
+                  style={activeQuestion !== index ? { 
+                    backgroundColor: 'var(--bg-secondary)', 
+                    color: 'var(--text-primary)' 
+                  } : {}}
                 >
                   <div className="flex items-center justify-between">
                     <span>Câu {index + 1}</span>
@@ -130,10 +134,10 @@ const QuestionList = ({ questions, quizId, onQuestionsUpdate }) => {
       {/* Nội dung chính */}
       <div className="flex-1 space-y-4">
         {error && (
-          <div className="p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+          <div className="p-4 border rounded-lg" style={{ backgroundColor: 'rgba(239, 68, 68, 0.1)', borderColor: 'rgba(239, 68, 68, 0.3)', color: 'var(--text-primary)' }}>
             <div className="flex">
               <div className="flex-shrink-0">
-                <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                <svg className="h-5 w-5" style={{ color: 'rgba(239, 68, 68, 0.8)' }} viewBox="0 0 20 20" fill="currentColor">
                   <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
                 </svg>
               </div>
@@ -149,18 +153,19 @@ const QuestionList = ({ questions, quizId, onQuestionsUpdate }) => {
           key={index} 
           ref={(el) => (questionRefs.current[index] = el)}
           data-question-index={index}
-          className="bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700"
+          className="rounded-lg shadow-md border"
+          style={{ backgroundColor: 'var(--card-bg)', borderColor: 'var(--border-color)' }}
         >
           <div className="p-6">
             {/* Question Header */}
             <div className="flex justify-between items-start mb-4">
               <div className="flex-1">
                 <div className="flex items-center space-x-2 mb-2">
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium" style={{ backgroundColor: 'rgba(59, 130, 246, 0.1)', color: 'var(--text-primary)' }}>
                     Câu {index + 1}
                   </span>
                 </div>
-                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                <h3 className="text-lg font-medium mb-2" style={{ color: 'var(--text-primary)' }}>
                   {question.prompt}
                 </h3>
               </div>
@@ -168,7 +173,12 @@ const QuestionList = ({ questions, quizId, onQuestionsUpdate }) => {
                 <button
                   onClick={() => handleEditQuestion(index)}
                   disabled={loading}
-                  className="inline-flex items-center px-3 py-1.5 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+                  className="inline-flex items-center px-3 py-1.5 border shadow-sm text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+                  style={{ 
+                    borderColor: 'var(--border-color)', 
+                    color: 'var(--text-primary)', 
+                    backgroundColor: 'var(--bg-secondary)' 
+                  }}
                 >
                   <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -178,7 +188,12 @@ const QuestionList = ({ questions, quizId, onQuestionsUpdate }) => {
                 <button
                   onClick={() => handleDeleteQuestion(index)}
                   disabled={loading}
-                  className="inline-flex items-center px-3 py-1.5 border border-red-300 dark:border-red-600 shadow-sm text-sm font-medium rounded-md text-red-700 dark:text-red-300 bg-white dark:bg-gray-700 hover:bg-red-50 dark:hover:bg-red-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50"
+                  className="inline-flex items-center px-3 py-1.5 border shadow-sm text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50"
+                  style={{ 
+                    borderColor: 'rgba(239, 68, 68, 0.3)', 
+                    color: 'rgba(239, 68, 68, 0.8)', 
+                    backgroundColor: 'var(--bg-secondary)' 
+                  }}
                 >
                   <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -190,37 +205,44 @@ const QuestionList = ({ questions, quizId, onQuestionsUpdate }) => {
 
             {/* Choices */}
             <div className="mb-4">
-              <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <h4 className="text-sm font-medium mb-2" style={{ color: 'var(--text-secondary)' }}>
                 Các lựa chọn:
               </h4>
               <div className="space-y-2">
                 {question.choices.map((choice, choiceIndex) => (
                   <div
                     key={choiceIndex}
-                    className={`flex items-center space-x-3 p-3 rounded-lg border ${
-                      choice.isCorrect
-                        ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800'
-                        : 'bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600'
-                    }`}
+                    className="flex items-center space-x-3 p-3 rounded-lg border"
+                    style={{
+                      backgroundColor: choice.isCorrect ? 'rgba(34, 197, 94, 0.1)' : 'var(--bg-secondary)',
+                      borderColor: choice.isCorrect ? 'rgba(34, 197, 94, 0.3)' : 'var(--border-color)'
+                    }}
                   >
-                    <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
-                      choice.isCorrect
-                        ? 'border-green-500 bg-green-500'
-                        : 'border-gray-300 dark:border-gray-600'
-                    }`}>
+                    <div 
+                      className="w-4 h-4 rounded-full border-2 flex items-center justify-center"
+                      style={{
+                        borderColor: choice.isCorrect ? '#22c55e' : 'var(--border-color)',
+                        backgroundColor: choice.isCorrect ? '#22c55e' : 'transparent'
+                      }}
+                    >
                       {choice.isCorrect && (
                         <div className="w-2 h-2 bg-white rounded-full"></div>
                       )}
                     </div>
-                    <span className={`text-sm ${
-                      choice.isCorrect
-                        ? 'text-green-800 dark:text-green-200 font-medium'
-                        : 'text-gray-700 dark:text-gray-300'
-                    }`}>
+                    <span 
+                      className="text-sm"
+                      style={{
+                        color: choice.isCorrect ? 'rgba(34, 197, 94, 0.9)' : 'var(--text-primary)',
+                        fontWeight: choice.isCorrect ? '500' : 'normal'
+                      }}
+                    >
                       {choice.text}
                     </span>
                     {choice.isCorrect && (
-                      <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                      <span 
+                        className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium"
+                        style={{ backgroundColor: 'rgba(34, 197, 94, 0.1)', color: 'rgba(34, 197, 94, 0.9)' }}
+                      >
                         Đúng
                       </span>
                     )}
@@ -231,11 +253,11 @@ const QuestionList = ({ questions, quizId, onQuestionsUpdate }) => {
 
             {/* Explanation */}
             {question.explanation && (
-              <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-                <h4 className="text-sm font-medium text-blue-800 dark:text-blue-200 mb-1">
+              <div className="mt-4 p-3 rounded-lg border" style={{ backgroundColor: 'rgba(59, 130, 246, 0.1)', borderColor: 'rgba(59, 130, 246, 0.3)' }}>
+                <h4 className="text-sm font-medium mb-1" style={{ color: 'rgba(59, 130, 246, 0.9)' }}>
                   Giải thích:
                 </h4>
-                <p className="text-sm text-blue-700 dark:text-blue-300">
+                <p className="text-sm" style={{ color: 'rgba(59, 130, 246, 0.8)' }}>
                   {question.explanation}
                 </p>
               </div>
