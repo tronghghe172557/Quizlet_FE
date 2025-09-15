@@ -4,12 +4,12 @@ const DarkModeContext = createContext();
 
 export function DarkModeProvider({ children }) {
   const [isDarkMode, setIsDarkMode] = useState(() => {
-    const saved = localStorage.getItem('darkMode');
+    const saved = localStorage.getItem('darkModeQuiz');
     return saved ? JSON.parse(saved) : true; // Mặc định là dark mode
   });
 
   useEffect(() => {
-    localStorage.setItem('darkMode', JSON.stringify(isDarkMode));
+    localStorage.setItem('darkModeQuiz', JSON.stringify(isDarkMode));
     if (isDarkMode) {
       document.documentElement.classList.remove('light');
       document.documentElement.classList.add('dark');

@@ -6,7 +6,7 @@ import UserProfile from "./UserProfile";
 export default function Header() {
   const location = useLocation();
   const { isDarkMode, toggleDarkMode } = useDarkMode();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
 
   const isActive = (path) => {
     return location.pathname === path || location.pathname.startsWith(path + '/');
@@ -41,20 +41,22 @@ export default function Header() {
               Danh sách Quiz
             </Link>
             
-            <Link
-              to="/quizzes/new"
-              className={`px-3 py-2 rounded-md text-sm font-medium transition ${
-                isActive('/quizzes/new') 
-                  ? 'bg-blue-100 text-blue-700' 
-                  : 'hover:bg-gray-100'
-              }`}
-              style={{ 
-                color: isActive('/quizzes/new') ? 'var(--text-primary)' : 'var(--text-secondary)',
-                backgroundColor: isActive('/quizzes/new') ? 'rgba(59, 130, 246, 0.1)' : 'transparent'
-              }}
-            >
-              Tạo Quiz
-            </Link>
+            {user?.role === 'admin' && (
+              <Link
+                to="/quizzes/new"
+                className={`px-3 py-2 rounded-md text-sm font-medium transition ${
+                  isActive('/quizzes/new') 
+                    ? 'bg-blue-100 text-blue-700' 
+                    : 'hover:bg-gray-100'
+                }`}
+                style={{ 
+                  color: isActive('/quizzes/new') ? 'var(--text-primary)' : 'var(--text-secondary)',
+                  backgroundColor: isActive('/quizzes/new') ? 'rgba(59, 130, 246, 0.1)' : 'transparent'
+                }}
+              >
+                Tạo Quiz
+              </Link>
+            )}
             
             <Link
               to="/submissions"

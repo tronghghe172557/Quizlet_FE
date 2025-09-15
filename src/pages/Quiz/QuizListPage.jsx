@@ -91,12 +91,14 @@ export default function QuizListPage() {
             >
               Lịch sử nộp bài
             </Link>
-            <Link 
-              to="/quizzes/new" 
-              className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium transition-colors"
-            >
-              + Tạo mới
-            </Link>
+            {user?.role === 'admin' && (
+              <Link 
+                to="/quizzes/new" 
+                className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium transition-colors"
+              >
+                + Tạo mới
+              </Link>
+            )}
           </div>
         </div>
         {filtered.length === 0 ? (

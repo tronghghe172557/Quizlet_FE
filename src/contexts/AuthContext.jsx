@@ -96,8 +96,8 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const loadAuthData = () => {
       try {
-        const accessToken = localStorage.getItem('accessToken');
-        const refreshToken = localStorage.getItem('refreshToken');
+        const accessToken = localStorage.getItem('accessTokenQuiz');
+        const refreshToken = localStorage.getItem('refreshTokenQuiz');
         const user = localStorage.getItem('user');
 
         if (accessToken && refreshToken && user) {
@@ -126,15 +126,15 @@ export const AuthProvider = ({ children }) => {
 
   // Save auth data to localStorage
   const saveAuthData = (user, accessToken, refreshToken) => {
-    localStorage.setItem('accessToken', accessToken);
-    localStorage.setItem('refreshToken', refreshToken);
+    localStorage.setItem('accessTokenQuiz', accessToken);
+    localStorage.setItem('refreshTokenQuiz', refreshToken);
     localStorage.setItem('user', JSON.stringify(user));
   };
 
   // Clear auth data from localStorage
   const clearAuthData = () => {
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('accessTokenQuiz');
+    localStorage.removeItem('refreshTokenQuiz');
     localStorage.removeItem('user');
   };
 
@@ -246,8 +246,8 @@ export const AuthProvider = ({ children }) => {
       if (response.ok && data.status === 'success') {
         const { accessToken, refreshToken: newRefreshToken } = data.data;
         
-        localStorage.setItem('accessToken', accessToken);
-        localStorage.setItem('refreshToken', newRefreshToken);
+        localStorage.setItem('accessTokenQuiz', accessToken);
+        localStorage.setItem('refreshTokenQuiz', newRefreshToken);
         
         dispatch({
           type: AUTH_ACTIONS.REFRESH_TOKEN_SUCCESS,

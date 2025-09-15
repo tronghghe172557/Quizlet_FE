@@ -8,7 +8,7 @@ export const VOCABULARY_API_URL = `${API_BASE_URL}/api/vocabulary`;
 
 // Helper function to get auth headers
 const getAuthHeaders = () => {
-  const accessToken = localStorage.getItem("accessToken");
+  const accessToken = localStorage.getItem("accessTokenQuiz");
   console.log("API - Access token:", accessToken ? "exists" : "missing");
   return accessToken ? { Authorization: `Bearer ${accessToken}` } : {};
 };
@@ -30,7 +30,7 @@ const makeAuthenticatedRequest = async (url, options = {}) => {
   // If token expired, try to refresh
   if (response.status === 401) {
     console.log("API - Token expired, attempting refresh...");
-    const refreshToken = localStorage.getItem("refreshToken");
+    const refreshToken = localStorage.getItem("refreshTokenQuiz");
     console.log("API - Refresh token:", refreshToken ? "exists" : "missing");
     if (refreshToken) {
       try {
@@ -60,7 +60,7 @@ const makeAuthenticatedRequest = async (url, options = {}) => {
               throw new Error("Invalid refresh token response format");
             }
             
-            localStorage.setItem("accessToken", newAccessToken);
+            localStorage.setItem("accessTokenQuiz", newAccessToken);
             console.log("API - New access token saved, retrying original request...");
 
             // Retry original request with new token
@@ -77,8 +77,8 @@ const makeAuthenticatedRequest = async (url, options = {}) => {
             console.log("API - Retry response status:", response.status);
           } catch (parseError) {
             console.error("API - Error parsing refresh response:", parseError);
-            localStorage.removeItem("accessToken");
-            localStorage.removeItem("refreshToken");
+            localStorage.removeItem("accessTokenQuiz");
+            localStorage.removeItem("refreshTokenQuiz");
             localStorage.removeItem("user");
             window.location.href = "/login";
             return response;
@@ -92,8 +92,8 @@ const makeAuthenticatedRequest = async (url, options = {}) => {
           } catch {
             console.error("API - Could not read error response");
           }
-          localStorage.removeItem("accessToken");
-          localStorage.removeItem("refreshToken");
+          localStorage.removeItem("accessTokenQuiz");
+          localStorage.removeItem("refreshTokenQuiz");
           localStorage.removeItem("user");
           window.location.href = "/login";
           return response; // Return original 401 response
@@ -101,16 +101,16 @@ const makeAuthenticatedRequest = async (url, options = {}) => {
       } catch (error) {
         console.error("Token refresh failed:", error);
         // Clear auth data and redirect to login
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("refreshToken");
+        localStorage.removeItem("accessTokenQuiz");
+        localStorage.removeItem("refreshTokenQuiz");
         localStorage.removeItem("user");
         window.location.href = "/login";
         return response; // Return original 401 response
       }
     } else {
       // No refresh token, redirect to login
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("refreshToken");
+      localStorage.removeItem("accessTokenQuiz");
+      localStorage.removeItem("refreshTokenQuiz");
       localStorage.removeItem("user");
       window.location.href = "/login";
     }
